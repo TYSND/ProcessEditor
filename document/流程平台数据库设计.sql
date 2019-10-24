@@ -7,7 +7,7 @@ create table processedge
 	leftval int null,
 	rightval int null,
 	primary key(processid,fromusersta,tousersta)
-)
+);
 
 create table processinfo
 (
@@ -15,7 +15,7 @@ create table processinfo
 	processname varchar(50) not null,
 	authorid int not null,
 	primary key(processid)
-)
+);
 
 
 create table processmember
@@ -24,14 +24,14 @@ create table processmember
 	userid int not null,
 	usersta int not null,
 	primary key(processid,userid)
-)
+);
 
 create table processvariety
 (
 	processid int not null,
 	variety varchar(20) not null,
 	primary key(processid,variety)
-)
+);
 
 create table allapplyedge
 (
@@ -42,7 +42,7 @@ create table allapplyedge
 	tousersta int not null,
 	res int not null,
 	primary key(applyid,fromusersta,tousersta)
-)
+);
 
 create table userinfo
 (
@@ -51,8 +51,9 @@ create table userinfo
 	email varchar(50) not null,
 	password varchar(20) not null,
 	primary key(userid),
-	unique key(nick,email)
-)
+	unique key(nick)
+	unique key(email)
+);
 
 
 create table applyvariety
@@ -62,7 +63,7 @@ create table applyvariety
 	variety varchar(20) not null,
 	val int not null,
 	primary key(applyid,userid,variety)
-)
+);
 
 create table applyreason
 (
@@ -70,4 +71,4 @@ create table applyreason
 	userid int not null,
 	reason varchar(200) not null,
 	primary key(applyid,userid,reason)
-)
+);
