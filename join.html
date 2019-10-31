@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<?php session_start();
+if (!isset($_SESSION['userid']))
+{
+	echo '请先登录!';
+	echo '
+	<a href="index.html">返回主页</a>
+	';
+	exit();
+}
+require 'php/dblogin.php';
+?>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>加入流程</title>
+		<script src="js/Wdatepicker/WdatePicker.js"></script>
+		<link href="css/joinFieldlayout.css" rel="stylesheet" type="text/css" />
+		<link href="css/indexlayout.css" rel="stylesheet" type="text/css" />
+		<link href="css/buttons.css" rel="stylesheet" type="text/css" />
+		<link href="css/comboBox.css" rel="stylesheet" type="text/css" />
+		<link href="css/loginAndregisterlayout.css" rel="stylesheet" type="text/css" />
+		<link href="css/loginAndregisterlayout.css" rel="stylesheet" type="text/css" />
+		<link href="css/unreadlayout.css" rel="stylesheet" type="text/css" />
+		<script src="js/public-header.js"></script>
+		<script src="js/combobox.js"></script>
+	</head>
+<body>
+<?php
+	require "php/publicHeader.php";
+	showHeader(0);
+?>
+
+	<!--改变下拉列表显示的名字，以及连接-->
+	<?php require 'php//changenickfield.php' ?>
+<!--下拉列表结束-->
+
+
+<div class="topblacktitle">
+	加入流程
+</div>
+	<form method="post">
+		<div class="allrows rbborder">
+			<!--Row1 -->
+			<div class="Row1">
+				<div class="fieldID"  style="padding-bottom:20px">
+					<span style="margin-bottom:20px">选择要加入的流程</span>
+					<!--<input type="text" id="fieldid" name="fieldid" />-->
+					<div>
+						<select class="langselect" id="fieldname" name="fieldname" onchange="" style="float:left">
+							<?php
+							$processres=mysqli_query($con,"select processid,processname from processinfo");
+							$uid=$_SESSION['userid'];
+							while($processrow=mysqli_fetch_array($processres))
+							{
+								$pid=$processrow['processid'];
+								$pname=$processrow['processname'];
+								//开发时创建的测试域不算在内
+								//if(($fid>=2&&$fid<=5)||($fid>=11&&$fid<=12))	continue;
+								//已经加入的域不算在内
+								$sql="select count(*) as num from processmember where processid=$pid and userid=$uid;";
+
+								$uinpres=mysqli_query($con,"select count(*) as num from processmember where processid=$pid and userid=$uid;");
+								$uinprow=mysqli_fetch_array($uinpres);
+								$num=$uinprow['num'];
+								
+								if($uinprow['num']==1)	continue;
+								echo "<option>$pname</option>";
+							}
+							
+							
+							?>
+							
+						</select>
+						<div class="submitButton" style="float:left">
+							<input  type="submit" class="button" id="submitbutton" value="提交" onmousedown="document.getElementById('submitbutton').style='width:70px;height:30px;';" onmouseup="document.getElementById('submitbutton').style='width:80px;height:40px;';" >
+						</div>
+						<div style="clear:both"></div>
+					</div>
+				</div>
+			</div>
+			
+			<div style="clear:both"></div>
+
+
+			
+		</div>
+	</form>
+	<?php
+if($_POST)
+{
+		$pname=$_POST["processname"];
+		$pidres=mysqli_query($con,"select processid from processinfo where processname='{$pname}'");
+		if (!$pidres) 
+		{
+			echo  mysqli_error($con);
+			exit();
+		}
+		$pidrow=mysqli_fetch_array($pidres);
+		$pid=$pidrow['processid'];
+		
+		
+		$uid=$_SESSION['userid'];
+		$result=mysqli_query($con,"
+			insert into processmember
+			values
+			('{$uid}','{$fid}',3);
+		");
+		if (!$result) 
+		{
+			echo  mysqli_error($con);
+			echo 'fieldinfo';
+			exit();
+		}
+		echo '<script>';
+		echo 'alert("加入成功!");parent.location.href="index.html";';
+		echo '</script>';
+			
+		
+		/*
+		else
+		{
+			echo '<script>';
+			echo 'alert("密码错误!");';
+			echo '</script>';
+		}
+		*/
+		/*
+		require 'php/dblogin.php';
+		$result = mysqli_query($con,"
+					select distinct tag from probcate;
+					");
+					
+		while($row = mysqli_fetch_array($result))
+		{
+			$tag=$row['tag'];
+			$str="<div class=\"blackbut\" style=\"float:left;margin-bottom:3px;cursor:pointer;\" onclick=\"window.location.href='problem.html?fieldid=1&tag=";
+			$str=$str.$tag."'\">";
+			$str=$str.$tag."</div> ";
+			echo $str;
+		}*/
+}		
+	?>
+</body>
+
+</html>

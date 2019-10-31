@@ -1,0 +1,439 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<?php 
+ignore_user_abort();
+	session_start();
+	require 'php/getValFromdb.php';
+	require 'php/getIndexmeaning.php';
+	require 'php/functionSet.php';
+	//require 'php/getIndexmeaning.php';
+	$fieldid=$_GET['fieldid'];
+	if(!$fieldid)
+		$fieldid=1;
+if (!isset($_SESSION['userid']))
+{
+	echo '请先登录!';
+	echo '
+	<a href="login.html">登录</a>
+	';
+	exit();
+}
+	$fieldid=$_GET['fieldid'];
+	if(!$fieldid)
+		$fieldid=1;
+	if(isset($_SESSION['fieldusta']))
+		$usta=$_SESSION['fieldusta'];
+	else
+		$usta=UserStatusatoi('普通成员');
+		//echo '<script>alert('.$usta.');</script>';
+	//echo $usta;
+	$res=checkUserstatus($fieldid,$usta);
+	if($res==0)
+	{
+		echo '你的权限不够！';
+		echo '
+		<a href="fields.html">返回我的域</a>
+		';
+		exit();
+	}
+?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>管理域内用户</title>
+<link href="css/indexlayout.css" rel="stylesheet" type="text/css" />
+<link href="css/problemlayout.css" rel="stylesheet" type="text/css" />
+<link href="css/contestinfo.css" rel="stylesheet" type="text/css" />
+<link href="css/comboBox.css" rel="stylesheet" type="text/css" />
+<link href="css/loginAndregisterlayout.css" rel="stylesheet" type="text/css" />
+<link href="css/buttons.css" rel="stylesheet" type="text/css" />
+<link href="css/unreadlayout.css" rel="stylesheet" type="text/css" />
+<script src="js/combobox.js"></script>
+<script>
+var changed=new Array();
+
+function tagmouseover(event)
+{
+	event.sourceElement.innerHtml="dfsdf";
+}
+function changeStatus(id)
+{
+	var uid='uid'+id;
+	var usta='usta'+id;
+	var nickid='nick'+id;
+	//alert(nickid);
+	var userid=document.getElementById(uid).value;
+	var userstatus=document.getElementById(usta).value;
+	var nick=document.getElementById(nickid).innerHTML;
+	//alert(userid+' '+userstatus+' '+nick);
+	changed[nick+'(uid='+userid+')']=userstatus;
+}
+
+function commonChange()
+{
+	var str="确定要修改以下用户权限吗\n";
+	for(var key in changed)
+	{
+		str+=key+"->"+changed[key]+"\n";
+	}
+	
+	var r=confirm(str);
+	
+	if (r==true)
+	{
+		document.getElementById("userlist").submit();
+	}
+	else
+	{
+		
+	} 
+	
+}
+	
+</script>
+<script>
+function searchbytag()
+{
+	var ttaagg=document.getElementById('taginput').value;
+	var hhref = window.location.href;
+	if(hhref.indexOf("tag")==-1)
+	{
+		window.location.href=hhref+"&name="+ttaagg;
+	}
+	else
+	{
+		hhref=hhref.substr(0,hhref.indexOf("tag"));
+		window.location.href=hhref=hhref+"name="+ttaagg;
+	}
+}
+
+function createProblem()
+{
+//	window.location.href="createProblem.html";
+	window.open("createProblem.html");
+}
+
+function UserStatusatoi(asta)
+{
+	if(asta=='超级管理员')
+		return 0;
+	else if(asta=='管理员')
+		return 1;
+	else if(asta=='普通成员')
+		return 2;
+	else if(asta=='待审核')
+		return 3;
+}
+
+
+</script>
+<script src="js/public-header.js"></script>
+
+</head>
+<body bgcolor="#F0F0F0">
+<!--更改分类标签的mouseover和out-->
+<script>
+var tagnum=6;
+function()
+{
+	var tag=document.getElementsByTagName("probtag");
+	for (var i=0;i<tagnum;i++)
+	{
+		tag[i].onmouseover=tagmouseover;
+	}
+}
+
+
+</script>
+<!---->
+<?php
+	require "php/publicHeader.php";
+	showHeader(0);
+?>
+	<!--改变下拉列表显示的名字，以及连接-->
+	<?php require 'php//changenickfield.php' ?>
+<!--下拉列表结束-->  
+<script>
+	//document.getElementById("nav_item_2").style="border-bottom-style:solid;";
+</script>
+
+<?php
+	//不同页面显示不同poster文字
+	$posterText=getFieldName($fieldid)."/Manage";
+	require "php/publicPoster.php";
+?>
+<div class="main_body">
+	<div class="left_box" style="margin-left:3%;width:62%">
+		<form method="post" id="userlist">
+    	<table class="rbborder">
+    		<tr>
+	            <th>用户ID</th><th>用户昵称</th><th>用户角色</th>
+            </tr>
+            <?php
+			
+				$fid=$_GET['fieldid'];
+				if($fid=="")	$fid=1;
+				require 'php/dblogin.php';
+				$result=mysqli_query($con,"
+					select userstatus from userstatus
+					where
+					fieldid={$fid} and userid={$_SESSION['userid']}
+				;");
+				$row=mysqli_fetch_array($result);
+				$ustainf=$row['userstatus'];
+				$result=mysqli_query($con,"
+					select a.userid,a.userstatus,b.nick
+					from 
+					userstatus a
+					left join
+					users b
+					on
+					a.userid=b.userid
+					where
+					a.fieldid='{$fid}'
+					order by a.userstatus;
+				");
+				$cnt=0;
+				while($row = mysqli_fetch_array($result))
+				{
+					
+					echo "<tr>";
+					echo "<td>".$row['userid']."</td>";
+					echo '<td id="nick'.$cnt.'">'.$row['nick']."</td>";
+					echo '<input type="text" name="uid[]" id="uid'.$cnt.'" value="'.$row['userid'].'" style="display:none;"/>';
+					if($row['userstatus']==0)
+					{
+						echo "<td>".'<select class="langselect" id="usta'.$cnt.'" name="usta[]" onchange="changeStatus('.$cnt.')">
+								<option selected="selected">超级管理员</option>
+								<option>管理员</option>
+								<option>普通成员</option>
+								<option>待审核</option>
+							</select>'."</td>";
+					}
+					else if($row['userstatus']==1)
+					{
+						echo "<td>".'<select class="langselect" id="usta'.$cnt.'" name="usta[]" onchange="changeStatus('.$cnt.')">
+								<option>超级管理员</option>
+								<option selected="selected">管理员</option>
+								<option>普通成员</option>
+								<option>待审核</option>
+							</select>'."</td>";
+					}
+					else if($row['userstatus']==2)
+					{
+						echo "<td>".'<select class="langselect" id="usta'.$cnt.'" name="usta[]" onchange="changeStatus('.$cnt.')">
+								<option>超级管理员</option>
+								<option>管理员</option>
+								<option selected="selected">普通成员</option>
+								<option>待审核</option>
+							</select>'."</td>";
+					}
+					else if($row['userstatus']==3)
+					{
+						echo "<td>".'<select class="langselect" id="usta'.$cnt.'" name="usta[]" onchange="changeStatus('.$cnt.')">
+								<option>超级管理员</option>
+								<option>管理员</option>
+								<option>普通成员</option>
+								<option selected="selected">待审核</option>
+							</select>'."</td>";
+					}
+
+					echo "</tr>";
+					$cnt++;
+				}
+				
+/*
+select a.userid,a.userstatus,b.nick
+from 
+userstatus a
+left join
+users b
+on
+a.userid=b.userid
+where
+a.fieldid=1;
+
+*/				
+            ?>
+        </table>
+		</form>
+		<button  class="button" onclick="commonChange()">提交</button>
+		<script>
+			var sl=document.getElementsByClassName('langselect');
+			//var bt=document.getElementsByClassName('openfieldbt');
+			var i;
+			for (i = 0; i < sl.length; i++) {
+				for(var j=0;j<<?php echo $ustainf;?>;j++)
+				{
+					sl[i].options[j].disabled=true;
+				}
+				var index =sl[i].selectedIndex;
+				//alert(sl[i].options[sl[i].selectedIndex].text);
+				//var tdval=td[i].options[td[i].selectedIndex].text;
+				//alert(tdval);
+				if(UserStatusatoi(sl[i].options[sl[i].selectedIndex].text)<<?php echo $ustainf;?>)	
+				{
+					//alert(UserStatusatoi(sl[i].options[sl[i].selectedIndex].text));
+					sl[i].disabled=true;
+					//bt[i].style.background="RGB(240,240,240)";
+				}
+			}
+		</script>
+		<?php
+		$result=mysqli_query($con,"
+			select fieldname from fieldinfo
+			where fieldid={$fid};
+		");
+/*
+select fieldname from fieldinfo
+where fieldid=4
+*/
+		if(!$result)
+		{
+			echo mysqli_error($con);
+			exit();
+		}
+		$row=mysqli_fetch_array($result);
+		$fname=$row['fieldname'];
+		//echo $fname;exit();
+				//require 'php/getIndexmeaning.php';
+				require '/usr/share/php/libphp-phpmailer/class.phpmailer.php';
+				require '/usr/share/php/libphp-phpmailer/class.smtp.php';
+				if($_POST)
+				{
+					$uid=$_POST['uid'];
+					$usta=$_POST['usta'];
+					$res="";
+					for($i=0;$i<count($uid);$i++)
+					{
+						//echo $uid[$i]." ".$usta[$i].'<br/>';
+						if($uid==$_SESSION['userid'])
+						{
+							$_SESSION['fieldusta']=UserStatusatoi($usta[$i]);
+						}
+						$sta=UserStatusatoi($usta[$i]);
+						/*
+						if($usta[$i]=='创建者')
+							$sta=0;
+						else if($usta[$i]=='管理员')
+							$sta=1;
+						else if($usta[$i]=='普通成员')
+							$sta=2;
+						else if($usta[$i]=='黑名单')
+							$sta=3;
+							*/
+						$oldstares=mysqli_query($con,"
+							select userstatus from userstatus
+							where fieldid={$fid} and userid={$uid[$i]}
+						;");
+						$oldstarow=mysqli_fetch_array($oldstares);
+						//没改变
+						if($oldstarow['userstatus']==$sta)	continue;
+						
+						$uinfores=mysqli_query($con,"
+							select nick,email from users
+							where userid={$uid[$i]}
+						;");
+						$uinforow=mysqli_fetch_array($uinfores);
+						$nick=$uinforow['nick'];
+						$email=$uinforow['email'];
+						
+						$res=$res.$nick."(uid=".$uid[$i]."):".UserStatusitoa($oldstarow['userstatus']).'->'.$usta[$i].'\n';
+						if($oldstarow['userstatus']==3&&$sta<3)
+						{
+						/*
+							$uinfores=mysqli_query($con,"
+								select nick,email from users
+								where userid={$uid[$i]}
+							;");
+							$uinforow=mysqli_fetch_array($uinfores);
+							$nick=$uinforow['nick'];
+							$email=$uinforow['email'];
+							*/
+							//发送邮件提醒
+							
+							
+							
+							//$uniqid = md5(uniqid(microtime(true),true));
+
+							$mail = new PHPMailer;
+							$mail->setFrom('buddyoj@163.com');
+							$mail->addAddress($email);
+							//邮件主题
+							$mail->Subject = 'BuddyOJ-Reminder email';
+							//邮件内容
+							$mail->CharSet='UTF-8';
+							$mail->Body = 'Dear User,your application to '.$fname.'(fieldid='.$fid.') has been approved, please login to confirm.';
+							$mail->IsSMTP();
+							$mail->SMTPSecure = 'ssl';
+							$mail->Host = 'smtp.163.com';
+							$mail->SMTPAuth = true;
+							$mail->Port = 465;
+
+							//你的邮箱地址，即（一）中你申请的邮箱
+							$mail->Username = "buddyoj@163.com";
+
+							//注意！此处的密码并非登录密码，而是（一）中提到的授权码！
+							$mail->Password = 'abcABC2000527';
+
+							//下面这条语句最好加上，以防ssl未认证通过
+							$mail->SMTPOptions = array(
+								'ssl' => array(
+									'verify_peer' => false,
+									'verify_peer_name' => false,
+									'allow_self_signed' => true
+								)
+							);
+
+							if(!$mail->send()) 
+							{
+							  echo 'Email is not sent.';
+							  echo 'Email error: ' . $mail->ErrorInfo;
+							exit();
+							} 
+						}
+						$result=mysqli_query($con,"
+							update userstatus set userstatus={$sta}
+							where fieldid={$fid} and userid={$uid[$i]};
+						");
+						if(!$result)
+						{
+							echo mysqli_error($con);
+							echo 'update error';
+							exit();
+						}
+					}
+					$myuid=$_SESSION['userid'];
+					$result=mysqli_query($con,"
+						select userstatus from userstatus
+						where userid={$myuid} and fieldid={$fid};
+					");
+					if(!$result)
+					{
+						echo mysqli_error($con);
+						exit();
+					}
+					$row=mysqli_fetch_array($result);
+					if($row['userstatus']>1)
+					{
+						$url='userIndex.html';
+						$_SESSION['fieldusta']=$row['userstatus'];
+					}
+					else
+						$url='memberManage.html?fieldid='.$fid;
+					
+					
+					echo '<script>';
+					echo 'alert("修改成功!\n'.$res.'");parent.location.href="'.$url.'";';
+					echo '</script>';
+				}
+		?>
+    </div>
+    <div class="right_box">
+		<input type="submit" value="一键审核" class="button" onclick="location.href='php/oneClickaudit.php?fieldid=<?php echo $fid?>'"/>
+    </div>
+    <div style="clear:both;"></div>
+</div>
+<div class="footer">
+</div>
+</body>
+</html>
