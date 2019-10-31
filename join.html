@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<?php session_start();
+<?php 
+/*
+session_start();
 if (!isset($_SESSION['userid']))
 {
 	echo '请先登录!';
@@ -8,6 +10,7 @@ if (!isset($_SESSION['userid']))
 	';
 	exit();
 }
+*/
 require 'php/dblogin.php';
 ?>
 <html>
@@ -27,12 +30,12 @@ require 'php/dblogin.php';
 	</head>
 <body>
 <?php
-	require "php/publicHeader.php";
-	showHeader(0);
+	//require "php/publicHeader.php";
+	//showHeader(0);
 ?>
 
 	<!--改变下拉列表显示的名字，以及连接-->
-	<?php require 'php//changenickfield.php' ?>
+	<?php //require 'php//changenickfield.php' ?>
 <!--下拉列表结束-->
 
 
@@ -99,17 +102,16 @@ if($_POST)
 		$pidrow=mysqli_fetch_array($pidres);
 		$pid=$pidrow['processid'];
 		
-		
 		$uid=$_SESSION['userid'];
 		$result=mysqli_query($con,"
 			insert into processmember
 			values
-			('{$uid}','{$fid}',3);
+			($uid,$pid,0);
 		");
 		if (!$result) 
 		{
-			echo  mysqli_error($con);
-			echo 'fieldinfo';
+//			echo  mysqli_error($con);
+			echo '加入失败';
 			exit();
 		}
 		echo '<script>';
