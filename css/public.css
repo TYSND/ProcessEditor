@@ -1,0 +1,47 @@
+.bar{
+	background:white;
+	margin-bottom:20px;
+	margin-top:20px;
+	padding:15px 10% 20px 10%;
+	height:auto;
+	border:solid #C0C0C0 1px;
+}
+
+.titlefont{
+	font-size:24px;
+	font-family:微软雅黑, 黑体, Consolas;
+}
+
+.infofont{
+	font-size:16px;
+	font-family:微软雅黑, 黑体, Consolas;
+}
+
+.fl{
+	float:left;
+}
+
+.fr{
+	float:right;
+}
+
+.killFloat{
+	clear:both;
+}
+
+a{
+	font-family:"微软雅黑", "黑体", Consolas;
+	text-decoration:underline;
+}
+a:link {
+	color:#000;
+	text-decoration:underline;
+}
+a:visited {
+	color:#000;
+	text-decoration:underline;
+}
+a:hover {
+	color:#000;
+ 	text-decoration:underline;
+}
