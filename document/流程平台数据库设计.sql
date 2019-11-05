@@ -25,23 +25,18 @@ create table processmember
 	usersta int not null,
 	primary key(processid,userid)
 );
-
+create table procstameaning
+(
+	processid int not null,
+	usersta int not null,
+	meaning varchar(50) not null,
+	primary key(processid,usersta)
+);
 create table processvariety
 (
 	processid int not null,
 	variety varchar(20) not null,
 	primary key(processid,variety)
-);
-
-create table allapplyedge
-(
-	applyid int not null,
-	userid int not null,
-	processid int not null,
-	fromusersta int not null,
-	tousersta int not null,
-	res int not null,
-	primary key(applyid,fromusersta,tousersta)
 );
 
 create table userinfo
@@ -54,6 +49,31 @@ create table userinfo
 	unique key(nick),
 	unique key(email)
 );
+
+create table applyinfo
+(
+	applyid int not null,
+	userid int not null,
+	processid int not null,
+	primary key(applyid)
+);
+
+create table applyres
+(
+	applyid int not null,
+	res int not null,
+	primary key(applyid)
+);
+
+create table allapplyedge
+(
+	applyid int not null,
+	fromusersta int not null,
+	tousersta int not null,
+	res int not null,
+	primary key(applyid,fromusersta,tousersta)
+);
+
 
 
 create table applyvariety
