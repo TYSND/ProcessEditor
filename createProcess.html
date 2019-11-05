@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<title>创建流程</title>
+	<link href="css/public.css" rel="stylesheet" type="text/css" />
+	<script src="js/dragElement.js"></script>
+	<script src="js/util.js"></script>
+	<script src="js/processEditor.js"></script>
+	<style>
+		.processNode{
+			position:absolute;
+			width:90px;
+			height:45px;
+			border-radius:23px;
+			box-shadow:0 0 3px 5px #CCC;
+			border:2px outset black;
+			padding-top:12px;
+			background:white;
+			color:black;
+			
+			text-align:center;
+			
+			font-size:26px;
+			font-family:"微软雅黑";
+		}
+		
+		.processNodeSelected{
+		position:absolute;
+			width:90px;
+			height:45px;
+			border-radius:23px;
+			box-shadow:0 0 3px 5px #CCC;
+			border:2px outset black;
+			padding-top:12px;
+			background:black;
+			color:white;
+			
+			text-align:center;
+			
+			font-size:26px;
+			font-family:"微软雅黑";
+			
+		}
+		
+		.processNode:hover{
+			cursor:move;
+		}
+		
+		.submitBut{
+			width:100px;
+			height:50px;
+			background:#CCC;
+			font-size:20px;
+		}
+	</style>
+</head>
+
+<body>
+	<script>processeditor=new processEditor();log("holy");</script>
+	<div id="editArea" style="width:100%;height:300px;"></div>
+	<button class="submitBut" onclick="processeditor.addNode();">添加结点</button>
+	<button class="submitBut" onclick="processeditor.addEdge();">添加边</button>
+</body>
+</html>
