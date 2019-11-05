@@ -1,4 +1,15 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<?php
+	session_start();
+	if(!isset($_SESSION['userid']))
+	{
+		echo '请先登录';
+		exit();
+	}
+	
+	$uid=$_SESSION['userid'];
+	//$uid=3;
+?>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -38,14 +49,115 @@
 <body>
 	<h2>我的审批</h2>
     <div id="barArea">
-        <div class="bar">
-            <a class="titlefont barCol1" target="_blank" href="applyInfo.html?applyid=21">
-                1919班级秋游费用申请
+	<?php
+		require 'php/dblogin.php';
+		//查询该用户在哪些流程里是审核者，及其身份
+		//查询这些流程里的申请
+		//查询这些申请中，哪些是该自己审核的，哪些是自己审核通过的，哪些是自己拒绝的
+		//显示这些申请
+		$mystares=mysqli_query($con,"
+			select a.processid,a.usersta,b.processname from
+			(select processid,usersta from processmember where userid=$uid and usersta!=0) a
+			left join
+			(select processid,processname from processinfo) b
+			on a.processid=b.processid
+		;");
+/*
+select a.processid,a.usersta,b.processname from
+(select processid,usersta from processmember where userid=3) a
+left join
+(select processid,processname from processinfo) b
+on a.processid=b.processid
+
+*/
+		while($mystarow=mysqli_fetch_array($mystares))
+		{
+			$pid=$mystarow['processid'];
+			$usta=$mystarow['usersta'];
+			$pname=$mystarow['processname'];
+//echo $pid.' '.$pname.' '.$usta.'<br/>';
+			$allapplyres=mysqli_query($con,"
+				select a.applyid,a.userid,b.res,a.applyname from
+				(select applyid,applyname,userid from applyinfo where processid=$pid) a
+				left join 
+				(select * from applyres) b
+				on a.applyid=b.applyid
+			;");
+			while($allapplyrow=mysqli_fetch_array($allapplyres))
+			{
+				$aid=$allapplyrow['applyid'];
+				$aname=$allapplyrow['applyname'];
+				$res=$allapplyrow['res'];
+				$appuid=$allapplyrow['userid'];
+				$appnickres=mysqli_query($con,"
+					select nick from userinfo
+					where
+					userid=$appuid
+				;");
+				$appnickrow=mysqli_fetch_array($appnickres);
+				$nick=$appnickrow['nick'];
+				//下面的待审核，通过，不通过指的是该申请，而非该用户的决定！！！
+				if($res==0)//待审核
+				{
+					//查询是不是该自己审核
+					/*
+					为了保险起见，查询4个值：自己这一点的入度a，入边中通过的边数b，出度c，出边中待审核的边数d
+					如果该自己审核，那么a==b&&c==d
+					*/
+					$indres=mysqli_query($con,"
+						select count(*) as ind from allapplyedge
+						where
+						applyid=$aid 
+						and tousersta=$usta
+					;");
+					$indrow=mysqli_fetch_array($indres);
+					$a=$indrow['ind'];
+					$indokres=mysqli_query($con,"
+						select count(*) as indok from allapplyedge
+						where
+						applyid=$aid 
+						and tousersta=$usta
+						and res=1
+					;");
+					$indokrow=mysqli_fetch_array($indokres);
+					$b=$indokrow['indok'];
+					
+					$outdres=mysqli_query($con,"
+						select count(*) as outd from allapplyedge
+						where
+						applyid=$aid 
+						and fromusersta=$usta
+					;");
+					$outdrow=mysqli_fetch_array($outdres);
+					$c=$outdrow['outd'];
+					$outdokres=mysqli_query($con,"
+						select count(*) as outdok from allapplyedge
+						where
+						applyid=$aid 
+						and fromusersta=$usta
+						and res=0
+					;");
+					$outdokrow=mysqli_fetch_array($outdokres);
+					$d=$outdokrow['outdok'];
+					//echo $a.' '.$b.' '.$c.' '.$d.'<br/>';
+					if($a==$b&&$c==$d)
+					{
+						$indtimeres=mysqli_query($con,"
+							select max(checktime) as ctime from allapplyedge
+							where
+							applyid=$aid and tousersta=$usta
+						;");
+						$indtimerow=mysqli_fetch_array($indtimeres);
+						$indtime=$indtimerow['ctime'];
+echo <<<mycheck
+		<div class="bar">
+            <a class="titlefont barCol1" target="_blank" href="applyInfo.html?applyid=$aid">
+                $aname
             </a>
-            <div class="infofont barCol2">来自 公费申请流程   申请人  lpj</div>
+            <div class="infofont barCol2">来自 $pname   申请人  $nick</div>
             <div class="infofont barCol3">
                 <div class="fl">
-                    2019.10.31 10:02:10
+                    $indtime
                 </div>
                 <div class="fl" style="margin-left:20px;">
                     请审批
@@ -53,36 +165,92 @@
                 <div class="killFloat"></div>
             </div>
         </div>
-        <div class="bar">
-            <a class="titlefont barCol1" target="_blank" href="showApply.html?applyid=20">
-                2020班级书费
+mycheck;
+					}
+				}
+				else//通过或不通过
+				{
+
+					//查询自己是通过还是不通过
+//echo $aid.' '.$usta;
+					$outres=mysqli_query($con,"
+						select * from allapplyedge
+						where
+						applyid=$aid 
+						and fromusersta=$usta
+					;");
+					$outrow=mysqli_fetch_array($outres);
+					$myres=$outrow['res'];
+					$ctime=$outrow['checktime'];
+					//echo $myres;
+
+echo <<<mycheck
+		<div class="bar">
+            <a class="titlefont barCol1" target="_blank" href="applyInfo.html?applyid=$aid">
+                $aname
             </a>
-            <div class="infofont barCol2">来自 教科书费用申请流程  申请人  ty</div>
+            <div class="infofont barCol2">来自 $pname   申请人  $nick</div>
             <div class="infofont barCol3">
                 <div class="fl">
-                    2019.11.31 10:02:10
+                    $ctime
                 </div>
-                <div class="fl rightFont" style="margin-left:20px;">
-                    您已审批同意
+                <div class="fl" style="margin-left:20px;">
+                    $myres
                 </div>
                 <div class="killFloat"></div>
             </div>
         </div>
-        <div class="bar">
-            <a class="titlefont barCol1" target="_blank" href="showApply.html?applyid=11">
-                2121蓝桥杯报名费
-            </a>
-            <div class="infofont barCol2">来自 教学费用申请流程  申请人 ysl</div>
-            <div class="infofont barCol3">
-                <div class="fl">
-                    2019.11.39 10:02:10
-                </div>
-                <div class="fl wrongFont" style="margin-left:20px;">
-                    您已审批不拒绝
-                </div>
-	         	<div class="killFloat"></div>
-            </div>
-        </div>
+mycheck;
+				}
+			}
+		}
+
+	?>
+        <!-- <div class="bar"> -->
+            <!-- <a class="titlefont barCol1" target="_blank" href="applyInfo.html?applyid=21"> -->
+                <!-- 1919班级秋游费用申请 -->
+            <!-- </a> -->
+            <!-- <div class="infofont barCol2">来自 公费申请流程   申请人  lpj</div> -->
+            <!-- <div class="infofont barCol3"> -->
+                <!-- <div class="fl"> -->
+                    <!-- 2019.10.31 10:02:10 -->
+                <!-- </div> -->
+                <!-- <div class="fl" style="margin-left:20px;"> -->
+                    <!-- 请审批 -->
+                <!-- </div> -->
+                <!-- <div class="killFloat"></div> -->
+            <!-- </div> -->
+        <!-- </div> -->
+        <!-- <div class="bar"> -->
+            <!-- <a class="titlefont barCol1" target="_blank" href="showApply.html?applyid=20"> -->
+                <!-- 2020班级书费 -->
+            <!-- </a> -->
+            <!-- <div class="infofont barCol2">来自 教科书费用申请流程  申请人  ty</div> -->
+            <!-- <div class="infofont barCol3"> -->
+                <!-- <div class="fl"> -->
+                    <!-- 2019.11.31 10:02:10 -->
+                <!-- </div> -->
+                <!-- <div class="fl rightFont" style="margin-left:20px;"> -->
+                    <!-- 您已审批同意 -->
+                <!-- </div> -->
+                <!-- <div class="killFloat"></div> -->
+            <!-- </div> -->
+        <!-- </div> -->
+        <!-- <div class="bar"> -->
+            <!-- <a class="titlefont barCol1" target="_blank" href="showApply.html?applyid=11"> -->
+                <!-- 2121蓝桥杯报名费 -->
+            <!-- </a> -->
+            <!-- <div class="infofont barCol2">来自 教学费用申请流程  申请人 ysl</div> -->
+            <!-- <div class="infofont barCol3"> -->
+                <!-- <div class="fl"> -->
+                    <!-- 2019.11.39 10:02:10 -->
+                <!-- </div> -->
+                <!-- <div class="fl wrongFont" style="margin-left:20px;"> -->
+                    <!-- 您已审批不拒绝 -->
+                <!-- </div> -->
+	         	<!-- <div class="killFloat"></div> -->
+            <!-- </div> -->
+        <!-- </div> -->
 	</div>
 </body>
 </html>

@@ -1,15 +1,13 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <?php
 	session_start();
-/*
 	if(!isset($_SESSION['userid']))
 	{
 		echo '请先登录';
 		exit();
 	}
-*/
 	$uid=$_SESSION['userid'];
-	$uid=1;
+	//$uid=1;
 ?>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -53,8 +51,8 @@
 	<?php
 		require 'php/dblogin.php';
 		$myapplyres=mysqli_query($con,"
-			select a.applyid,b.res,c.processname from 
-			(select applyid,processid from applyinfo where userid=$uid) a
+			select a.applyid,b.res,c.processname,a.applyname from 
+			(select applyid,processid,applyname from applyinfo where userid=$uid) a
 			left join
 			(select * from applyres) b
 			on a.applyid=b.applyid
@@ -78,15 +76,35 @@ on a.processid=c.processid
 			$aid=$myapplyrow['applyid'];
 			$ares=$myapplyrow['res'];
 			$pname=$myapplyrow['processname'];
+			$aname=$myapplyrow['applyname'];
+			if($ares==2)
+			{
+				//审核不通过
+				$timeres=mysqli_query($con,"
+					select min(checktime) as time from allapplyedge
+					where
+					applyid=$aid and res=2
+				;");
+			}
+			else
+			{
+				$timeres=mysqli_query($con,"
+					select max(checktime) as time from allapplyedge
+					where
+					applyid=$aid
+				;");
+			}
+			$timerow=mysqli_fetch_array($timeres);
+			$time=$timerow['time'];
 echo <<<applyinfo
 		<div class="bar">
             <a class="titlefont barCol1" target="_blank" href="showApply.html?applyid=$aid">
-                $pname
+                $aname
             </a>
             <div class="infofont barCol2">来自 $pname</div>
             <div class="infofont barCol3">
                 <div class="fl">
-                    2019.11.39 10:02:10
+                    $time
                 </div>
                 <div class="fl wrongFont" style="margin-left:20px;">
                     状态：$ares
