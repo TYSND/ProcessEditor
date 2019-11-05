@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>注册</title>
+</head>
+
+<body>
+	<h2>注册</h2>
+	<form action="" method="POST">
+		<input name="email" size="20">邮箱</input>
+		<input name="nick" size="20">昵称</input>
+		<input name="password" size="20">密码</input>
+		<button type="submit">注册</button>
+	</form>
+	<?php
+		require 'php/dblogin.php';
+		if($_POST)
+		{
+			$email=$_POST['email'];
+			$nick=$_POST['nick'];
+			$pw=$_POST['password'];
+			$uidres=mysqli_query($con,"
+				select max(userid) as muid
+				from userinfo
+			;");
+			$uidrow=mysqli_fetch_array($uidres);
+			$muid=$uidrow['muid'];
+			$muid++;
+			
+			//mysqli_autocommit($con,FALSE);
+
+			$regres=mysqli_query($con,"
+				insert into userinfo
+				values
+				($muid,'{$nick}','{$email}','{$pw}')
+			;");
+			if(!$regres)
+			{
+			echo <<<error
+<script>alert('register failed!');location.href="register.html";</script>
+error;
+			exit();
+			}
+			else
+			{
+echo <<<success
+<script>alert('register success!');location.href="login.html";</script>
+success;
+			}
+		}
+	
+	?>
+</body>
+</html>

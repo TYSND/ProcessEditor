@@ -2,16 +2,44 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>注册</title>
+<title>登录</title>
 </head>
 
 <body>
 	<h2>登录</h2>
 	<form action="" method="POST">
-		<input size="20">邮箱</input>
-		<input size="20">密码</input>
+		<input name="email" size="20">邮箱</input>
+		<input name="password" size="20">密码</input>
 		<button type="submit">登录</button>
 		<button type="button" onclick="location.href='register.html'">注册</button>
 	</form>
+	<?php
+		require 'php/dblogin.php';
+		if($_POST)
+		{
+			$email=$_POST['email'];
+			$pw=$_POST['password'];
+			$pwres=mysqli_query($con,"
+				select userid,password from userinfo
+				where
+				email='{$email}'
+			;");
+			$pwrow=mysqli_fetch_array($pwres);
+			if($pw==$pwrow['password'])
+			{
+				$_SESSION['userid']=$pwrow['userid'];
+echo <<<success
+<script>location.href="index.html";</script>
+success;
+			}
+			else
+			{
+echo <<<error
+<script>alert('邮箱或密码错误!');location.href="login.html";</script>
+error;
+			}
+		}
+	
+	?>
 </body>
 </html>
