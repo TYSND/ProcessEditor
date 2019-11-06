@@ -55,6 +55,7 @@ create table applyinfo
 	applyid int not null,
 	userid int not null,
 	processid int not null,
+	applyname varchar(50) not null,
 	primary key(applyid)
 );
 
@@ -71,6 +72,7 @@ create table allapplyedge
 	fromusersta int not null,
 	tousersta int not null,
 	res int not null,
+	checktime datetime not null default '0001-01-01 00:00:00',
 	primary key(applyid,fromusersta,tousersta)
 );
 
