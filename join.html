@@ -106,7 +106,7 @@ if($_POST)
 		$result=mysqli_query($con,"
 			insert into processmember
 			values
-			($uid,$pid,0);
+			($uid,$pid,1);
 		");
 		if (!$result) 
 		{
