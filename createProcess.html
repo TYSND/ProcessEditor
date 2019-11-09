@@ -71,7 +71,7 @@
 </head>
 
 <body>
-	<div style=";width:1000px">
+	<div class="fl" style="width:1000px">
 		<div id="editArea" style="width:1000px;height:600px;">
 			<canvas width="1000" height="600" id="canvas" style="border:1px solid #CCC">
 			</canvas>
@@ -80,7 +80,10 @@
 		<button class="submitBut" onclick="processeditor.addNormalEdge();">添加边</button>
 		<button class="submitBut" onclick="processeditor.addVarEdge();">添加条件判断边</button>
 	</div>
-	<button class="submitBut" onclick="processeditor.submit();">提交</button>
+	<div class="fl" style="margin-left:30px">
+	</div>
+	<div class="killFloat"></div>
+	<button type="button" class="submitBut" onclick="processeditor.submit();">提交</button>
 	<script>
 		//初始化放在最后，防止get不到未加载的DOM元素
 		processeditor=new processEditor();

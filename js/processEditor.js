@@ -2,7 +2,7 @@
 
 function processEditor(){
 	/*this is parent class for processEditor*/
-	
+	this.processTitle="";
 	var nodes=[];	//all nodes
 	
 	var vars=["money","days","people"];	//all judging variety
@@ -32,12 +32,29 @@ function processEditor(){
 	this.nodeWidth=0,this.nodeHeight=0;
 	
 	this.initial=function(){
+		/*add default start&end node*/
 		this.createNode("start");		
 		this.createNode("end");
 		nodeWidth=get("start").offsetWidth;
 		nodeHeight=get("start").offsetHeight;
 		get("start").style.top=(canvasHeight/2)+"px";
 		get("end").style.top=(canvasHeight/2)+"px";get("end").style.left=(canvasWidth-nodeWidth)+"px";
+		openSubWin("<div class='titlefont'>input process title</div><input type='text' id='processTitle'/>",
+					function(){
+						that.processTitle=get("processTitle").value;
+					}
+				);
+		/*
+		subWin=window.open("","process title","width=200,heigth=100");
+		subWin.document.write("	<div>input process title\
+									<input type='text' id='processTitle'/>\
+									<button onclick='window.close();'>提交</button>\
+								</div>\
+								");
+		subWin.onbeforeunload=function(){
+			processTitle=subWin.document.getElementById("processTitle").value;
+		};
+		*/
 	}
 	
 	this.nodeClick=function(id){		
@@ -71,23 +88,20 @@ function processEditor(){
 			alert("no more reviewers!");
 			return;
 		}
-		subWin=window.open("","select reviewer","width=200,height=100");
-		subWin.document.write("<div>select reviewer:</div>\
-									<select id='reviewerSelect'>");
+		subWinStr="<div class='titlefont'>select reviewer:</div>\
+						<select id='reviewerSelect'>";
 		log("reviewers:"+reviewers);
 		for (var i=0;i<reviewers.length;i++)
 		{
-			subWin.document.write("<option value='"+reviewers[i]+"'>"+reviewers[i]+"</option>");
+			subWinStr+="<option value='"+reviewers[i]+"'>"+reviewers[i]+"</option>";
 		}
-		subWin.document.write("</select>");
-		subWin.document.write("<button onclick='window.close();'>确定</button>");
-		var that=this;				//handle of this in sub function
+		subWinStr+="</select>";
 		/*after close reviewer window,append new node*/
-		subWin.onbeforeunload=function(){
-			var reviewer=subWin.document.getElementById("reviewerSelect").value;	//get selected reviewer
-			//this.createNode(reviewer);
-			that.createNode(reviewer);
-		}
+		openSubWin(subWinStr,function(){
+				var reviewer=get("reviewerSelect").value;	//get selected reviewer
+				that.createNode(reviewer);
+			}
+		);
 	}
 	
 	
@@ -155,8 +169,6 @@ function processEditor(){
 		/*function after click addVarEdge button.
 		 *get variety info before create edge
 		 */
-		subWin=window.open("","add variety edge","width=200,height=200");
-		var newWin=subWin;
 		var newWinText="<div>select variety:</div>\
 								<select id='varietySelect'>";
 		for (var i=0;i<vars.length;i++)
@@ -164,16 +176,16 @@ function processEditor(){
 		newWinText+="</select>\
 					<div>variety lower bound<input id='varietyLow' value='0'/></div>\
 					<div>variety higher bound<input id='varietyHi' value='100'/></div>\
-					<button onclick='window.close()' class='submitBut'>提交</button>\
 					";
-		newWin.document.write(newWinText);
-		newWin.onbeforeunload=function(){
-			//newWin.get=util.get;
-			/*load info from subWin*/
-			that.createEdge(newWin.document.getElementById("varietySelect").value,
-							newWin.document.getElementById("varietyLow").value,
-							newWin.document.getElementById("varietyHi").value);
-		}
+		openSubWin(newWinText,function(){
+				//newWin.get=util.get;
+				/*load info from subWin*/
+					that.createEdge(document.getElementById("varietySelect").value,
+								document.getElementById("varietyLow").value,
+								document.getElementById("varietyHi").value
+								);
+				}
+			);
 	}
 	
 	this.createEdge=function(varName,varLow,varHi){
@@ -219,6 +231,7 @@ function processEditor(){
 					get("editArea").appendChild(newText);
 					centerVarText(selected[0],selected[1]);		//make text center
 				}
+				that.clearEdges();
 				that.reDrawEdges();
 				//that.lineNodeToNode(selected[0],selected[1],ctx,"blue");
 				that.clearUp();
@@ -227,7 +240,9 @@ function processEditor(){
 	}
 	
 	this.submit=function(){
+		/*submit JSON string*/
 		var jstr={};
+		jstr.title=that.processTitle;
 		jstr.nodes=[];
 		for (var i in nodes)
 			jstr.nodes.push(nodes[i].reviewer);
@@ -247,7 +262,22 @@ function processEditor(){
 			}
 		}
 		jstr=JSON.stringify(jstr);
-		log(jstr);
+		/*create hidden form and submit*/
+		var myForm=document.createElement("form"),myInput=document.createElement("input");
+		myForm.style.visibility="hidden";
+		myForm.action="php/createProcess.php";
+		myForm.method="POST";
+		
+		myInput.style.visibility="hidden";
+		myInput.type="TEXT";
+		myInput.name="jstr";
+		myInput.value=jstr;
+		
+		myForm.appendChild(myInput);
+		log(myInput.value);
+		get("editArea").appendChild(myForm);
+		myForm.submit();
+		get("editArea").removeChild(myForm);
 	}
 }
 
