@@ -1,0 +1,88 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<?php
+	session_start();
+	if(!isset($_SESSION['userid']))
+	{
+		echo '请先登录';
+		exit();
+	}
+	$uid=$_SESSION['userid'];
+	//$uid=1;
+?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<title>申请详情</title>
+	<link href="css/public.css" rel="stylesheet" type="text/css" />
+	<style>
+		.rightFont{
+			color:#4BB82C;
+			font-weight:bold;
+		}
+		.wrongFont{
+			color:#D51E47;
+			font-weight:bold;
+		}
+		
+		.bar{
+			width:25%;
+			padding-left:5%;
+		}
+		
+		#barArea{
+			padding:10px 5% 20px 5%;
+		}
+		
+		.barCol2{
+			margin-top:6px;
+		}
+		.barCol3{
+			margin-top:6px;
+		}
+	</style>
+
+</head>
+
+<body>
+	<h2>申请详情</h2>
+	<div style="padding-left:5%">
+		<div class="bar">
+			<h2>申请人</h2>
+			<div class="infofont">lpj</div>
+		</div>
+		<div class="bar">
+			<h2>申请参数</h2>
+			<div>
+				<table>
+					<tr>
+						<td>请假天数
+						</td>
+						<td>3
+						</td>
+					</tr>
+					<tr>
+						<td>申请金额
+						</td>
+						<td>1000000
+						</td>
+					</tr>
+					<tr>
+						<td>综测加分
+						</td>
+						<td>-99999999999999
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+		<div class="bar">
+			<h2>申请说明</h2>
+			<!--如果没有说明，则输出一个“无”-->
+			<div class="infofont">
+				回家
+			</div>
+		</div>
+	</div>
+</body>
+</html>
