@@ -58,40 +58,88 @@
 	}
 	$nickrow=mysqli_fetch_array($nickres);
 	$nick=$nickrow['nick'];
+	$ainfores=mysqli_query($con,"
+		select applyname,processid,applyreason from applyinfo
+		where
+		applyid=$aid
+	;");
+	if(!$ainfores)
+	{
+		echo 'ainfo error';
+		exit();
+	}
+	$ainforow=mysqli_fetch_array($ainfores);
+	$pid=$ainforow['processid'];
+	$aname=$ainforow['applyname'];
+	$area=$ainforow['applyreason'];
 	
-
+	$pnameres=mysqli_query($con,"
+		select processname from processinfo
+		where
+		processid=$pid
+	;");
+	if(!$pnameres)
+	{
+		echo 'pname error';
+		exit();
+	}
+	$pnamerow=mysqli_fetch_array($pnameres);
+	$pname=$pnamerow['processname'];
+	
+	$avres=mysqli_query($con,"
+		select variety,val from applyvariety
+		where
+		applyid=$aid
+	;");
+	if(!$avres)
+	{
+		echo 'var error';
+		exit();
+	}
 ?>
 <body>
 	<h2>申请详情</h2>
 	<div style="padding-left:5%">
 		<div class="bar">
 			<h2>申请人</h2>
-			<div class="infofont">lpj</div>
-			<div class="infofont">来自 请假流程</div>
+			<div class="infofont"><?php echo $nick;?></div>
+			<div class="infofont">来自 <?php echo $pname; ?></div>
 			
 		</div>
 		<div class="bar">
 			<h2>申请参数</h2>
 			<div>
 				<table>
-					<tr>
-						<td>请假天数
-						</td>
-						<td>3
-						</td>
-					</tr>
-					<tr>
-						<td>申请金额
-						</td>
-						<td>1000000
-						</td>
-					</tr>
-					<tr>
-						<td>综测加分
-						</td>
-						<td>-99999999999999
-						</td>
-					</tr>
+				<?php
+				while($avrow=mysqli_fetch_array($avres))
+				{
+					echo <<<tr
+						<tr>
+							<td>$avrow['variety']</td>
+							<td>$avrow['val']</td>
+						</tr>
+tr;
+				}
+				
+				?>
+					<!-- <tr> -->
+						<!-- <td>请假天数 -->
+						<!-- </td> -->
+						<!-- <td>3 -->
+						<!-- </td> -->
+					<!-- </tr> -->
+					<!-- <tr> -->
+						<!-- <td>申请金额 -->
+						<!-- </td> -->
+						<!-- <td>1000000 -->
+						<!-- </td> -->
+					<!-- </tr> -->
+					<!-- <tr> -->
+						<!-- <td>综测加分 -->
+						<!-- </td> -->
+						<!-- <td>-99999999999999 -->
+						<!-- </td> -->
+					<!-- </tr> -->
 				</table>
 			</div>
 		</div>
@@ -99,7 +147,12 @@
 			<h2>申请说明</h2>
 			<!--如果没有说明，则输出一个“无”-->
 			<div class="infofont">
-				回家
+				<?php
+					if($area=="")
+						echo "无";
+					else
+						echo $area;
+				?>
 			</div>
 		</div>
 		<button class="submitBut" style="margin-right:30%">通过该申请</button>
