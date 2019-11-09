@@ -6,11 +6,10 @@ function processEditor(){
 	
 	var vars=["money","days","people"];	//all judging variety
 	
-	//reviewers=[];	//all reviewer id
 	/*all reviewer id.also donates nodes id.
 	 *have "start" and "end" node in initial
 	 */
-	var reviewers=["lll","ppp","jjj","rrr","start","end"];
+	var reviewers=[];
 	
 	var c=get("canvas");
 	var ctx=c.getContext("2d");
@@ -20,20 +19,19 @@ function processEditor(){
 	 *2 keys for from node id and to node id
 	 */
 	var edges=[];
-	for (var i=0;i<reviewers.length;i++)
-	{
-		edges[reviewers[i]]=[];
-	}
-	
-	var subWin="";		//handle for sub window.only one sub window allowed any time
 	
 	var that=this;
 	var canvasWidth=get("canvas").width,canvasHeight=get("canvas").height;
 	
 	
-	this.initial=function(){
+	this.initial=function(arr_reviewers){
+		reviewers=arr_reviewers;
+		for (var i=0;i<reviewers.length;i++)
+		{
+			edges[reviewers[i]]=[];
+		}
 		/*add default start&end node*/
-		this.createNode("start");		
+		this.createNode("start");
 		this.createNode("end");
 		nodeWidth=get("start").offsetWidth;
 		nodeHeight=get("start").offsetHeight;
@@ -46,6 +44,7 @@ function processEditor(){
 				);
 	}
 	
+	
 	this.nodeClick=function(id){		
 		/*public handle for all nodes' onclick function.
 		 *change all nodes' by simply save nodeClick function
@@ -53,6 +52,7 @@ function processEditor(){
 		 *you can restore nodeClick by nodeClick=before
 		 */
 	}
+	
 	
 	this.createNode=function(reviewer){
 		/*create a new node into data structures and render to webpage*/
@@ -70,6 +70,7 @@ function processEditor(){
 		dragElement(handle);	//make div draggable
 		nodes.push(new node(handle.offsetLeft,handle.offsetTop,handle.id,reviewer));
 	}
+	
 	
 	this.addNode=function(){
 		/*function after click add node button*/
@@ -117,6 +118,7 @@ function processEditor(){
 	//	log("clear ok");
 	}
 	
+	
 	this.reDrawEdges=function(){
 		/*after move node,add edge,delete edge,delete node,
 		 *call this func to redraw all edges
@@ -142,6 +144,7 @@ function processEditor(){
 	//	log("draw ok");
 	}
 	
+	
 	this.lineNodeToNode=function(from,to,ctx,style="rgba(90, 125, 174, 0.4)",width="6"){
 		/*draw line from node with name from to node with name to*/
 		ctx.strokeStyle=style;
@@ -154,10 +157,12 @@ function processEditor(){
 		ctx.stroke();
 	}
 	
+	
 	this.addNormalEdge=function(){
 		/*function after click addedge button*/
 		this.createEdge("","","");
 	}
+	
 	
 	this.addVarEdge=function(){
 		/*function after click addVarEdge button.
@@ -181,6 +186,7 @@ function processEditor(){
 				}
 			);
 	}
+	
 	
 	this.createEdge=function(varName,varLow,varHi){
 		log(varName+" "+varLow+" "+varHi);
@@ -273,6 +279,7 @@ function processEditor(){
 		myForm.submit();
 		get("editArea").removeChild(myForm);
 	}
+	
 	
 	this.drawApply=function(jstr){
 		/*function only used in showApply.html.
