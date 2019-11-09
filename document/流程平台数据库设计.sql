@@ -56,6 +56,7 @@ create table applyinfo
 	userid int not null,
 	processid int not null,
 	applyname varchar(50) not null,
+	applyreason varchar(200) not null,
 	primary key(applyid)
 );
 
@@ -81,16 +82,9 @@ create table allapplyedge
 create table applyvariety
 (
 	applyid int not null,
-	userid int not null,
 	variety varchar(20) not null,
 	val int not null,
 	primary key(applyid,userid,variety)
 );
 
-create table applyreason
-(
-	applyid int not null,
-	userid int not null,
-	reason varchar(200) not null,
-	primary key(applyid,userid,reason)
-);
+
