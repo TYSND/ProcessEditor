@@ -47,7 +47,7 @@ mysqli_autocommit($con,FALSE);
 	while($pvrow=mysqli_fetch_array($pvres))
 	{
 		$v=$pvrow['variety'];
-		$vv=$_POST[$v]
+		$vv=$_POST[$v];
 		$var[$v]=$vv;
 		$avres=mysqli_query($con,"
 			insert into applyvariety

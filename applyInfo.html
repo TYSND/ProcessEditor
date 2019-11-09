@@ -7,6 +7,7 @@
 		exit();
 	}
 	$uid=$_SESSION['userid'];
+	$aid=$_GET['applyid'];
 	//$uid=1;
 ?>
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -43,7 +44,23 @@
 	</style>
 
 </head>
+<?php
+	require 'php/dblogin.php';
+	$nickres=mysqli_query($con,"
+		select nick from userinfo
+		where
+		userid=$uid
+	;");
+	if(!$nickres)
+	{
+		echo 'user error';
+		exit();
+	}
+	$nickrow=mysqli_fetch_array($nickres);
+	$nick=$nickrow['nick'];
+	
 
+?>
 <body>
 	<h2>申请详情</h2>
 	<div style="padding-left:5%">
