@@ -46,7 +46,16 @@
 
 <body>
 	<h2>我的申请</h2>
-    <button class="createBut" type="button" onclick="">创建新申请</button>
+	<div>
+		<select id="processSelected">
+			<!--value为流程的id-->
+			<option value="1">请假流程</option>
+			<option value="2">公费申请流程</option>
+			<option value="3">综测流程</option>
+		</select>
+		<button class="createBut" type="button" 
+		onclick="location.href='createApply.html?processid='+document.getElementById('processSelected').value">创建新申请</button>
+	</div>
     <div id="barArea">
 	<?php
 		require 'php/dblogin.php';
