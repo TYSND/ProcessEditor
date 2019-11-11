@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<?php
+	session_start();
+	if(!isset($_SESSION['userid']))
+	{
+		echo '请先登录';
+		exit();
+	}
+	$uid=$_SESSION['userid'];
+	//$uid=1;
+?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<title>创建申请</title>
+	<link href="css/public.css" rel="stylesheet" type="text/css" />
+	<style>
+		.rightFont{
+			color:#4BB82C;
+			font-weight:bold;
+		}
+		.wrongFont{
+			color:#D51E47;
+			font-weight:bold;
+		}
+		
+		.bar{
+			width:25%;
+			padding-left:5%;
+		}
+		
+		#barArea{
+			padding:10px 5% 20px 5%;
+		}
+		
+		.barCol2{
+			margin-top:6px;
+		}
+		.barCol3{
+			margin-top:6px;
+		}
+	</style>
+
+</head>
+
+<body>
+	<h2>创建申请</h2>
+    <form id="barArea" method="POST" action="createApply.php">
+		<!--隐藏的input，值为流程的id-->
+		<input type="hidden" name="processid" value="1"/>
+		<table>
+			<!--申请的标题默认为流程的名字-->
+			<tr>
+				<td>
+					申请标题
+				</td>
+				<td>
+					<input name="applyname" value="该流程名"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					请假天数
+				</td>
+				<td>
+					<input name="请假天数" value="4"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					申请金额
+				</td>
+				<td>
+					<input name="申请金额" value="100"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					从测加分
+				</td>
+				<td>
+					<input name="从测加分" value="-999999999"/>
+				</td>
+			</tr>
+		</table>
+		其它说明
+		<textarea width="40" height="20" name="applyreason">
+		</textarea>
+		<div>
+			<button type="submit">提交</button>
+		</div>
+	</form>
+</body>
+</html>
