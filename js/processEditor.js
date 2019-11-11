@@ -299,7 +299,7 @@ function processEditor(){
 				varHi:jstr.edges[i].varHi,
 				status:jstr.edges[i].status,
 			};
-			if (jstr.edges[i].varName!=""){
+			if (jstr.edges[i].varName!=null){
 				/*create judging variety text on edge*/
 				var newText=document.createElement("div");
 				newText.id=textId(jstr.edges[i].from,jstr.edges[i].to);
