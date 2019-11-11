@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<?php
+	session_start();
+	if(!isset($_SESSION['userid']))
+	{
+		echo '请先登录';
+		exit();
+	}
+	$uid=$_SESSION['userid'];
+	//$uid=1;
+?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<title>首页</title>
+	<link href="css/public.css" rel="stylesheet" type="text/css" />
+	<style>
+		.rightFont{
+			color:#4BB82C;
+			font-weight:bold;
+		}
+		.wrongFont{
+			color:#D51E47;
+			font-weight:bold;
+		}
+		
+		.bar{
+			width:25%;
+			padding-left:5%;
+		}
+		
+		#barArea{
+			padding:10px 5% 20px 5%;
+		}
+		
+		.barCol2{
+			margin-top:6px;
+		}
+		.barCol3{
+			margin-top:6px;
+		}
+	</style>
+
+</head>
+
+<body>
+	<h2>首页</h2>
+    <button onclick="myApply.html">我的申请</button>
+	<button onclick="myCheck.html">我的审核</button>
+	<button onclick="myProcess.html">我的流程</button>
+</body>
+</html>
