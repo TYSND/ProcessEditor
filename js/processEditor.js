@@ -126,7 +126,7 @@ function processEditor(){
 		
 //		ctx.clearRect(0,0,c.width,c.height);
 		/*color for different status edges*/
-		var color=["rgba(61, 198, 61, 0.51)","rgba(217, 118, 118, 0.61)","rgba(90, 125, 174, 0.4)"];
+		var color=["rgba(90, 125, 174, 0.4)","rgba(61, 198, 61, 0.51)","rgba(217, 118, 118, 0.61)"];
 		for (var i in edges)
 		{
 			for (var j in edges[i])
