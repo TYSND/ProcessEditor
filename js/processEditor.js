@@ -4,7 +4,7 @@ function processEditor(){
 	this.processTitle="";
 	var nodes=[];	//all nodes
 	
-	var vars=["money","days","people"];	//all judging variety
+	var vars=["money","天","people"];	//all judging variety
 	
 	/*all reviewer id.also donates nodes id.
 	 *have "start" and "end" node in initial
