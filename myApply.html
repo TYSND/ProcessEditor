@@ -49,16 +49,42 @@
 	<div>
 		<select id="processSelected">
 			<!--value为流程的id-->
-			<option value="1">请假流程</option>
-			<option value="2">公费申请流程</option>
-			<option value="3">综测流程</option>
+<?php
+	require 'php/dblogin.php';
+	$plstres=mysqli_query($con,"
+		select a.processid,b.processname
+		from 
+		processmember a
+		left join
+		processinfo b
+		on a.processid=b.processid
+	;");
+	if(!$plstres)
+	{
+		echo 'process list error';
+		exit();
+	}
+	while($plstrow=mysqli_fetch_array($plstres))
+	{
+		$pid=$plstrow['processid'];
+		$pname=$plstrow['processname'];
+echo <<<process
+	<option value="$pid">$pname</option>
+process;
+	}
+
+
+?>
+			<!-- <option value="1">请假流程</option> -->
+			<!-- <option value="2">公费申请流程</option> -->
+			<!-- <option value="3">综测流程</option> -->
 		</select>
 		<button class="createBut" type="button" 
 		onclick="location.href='createApply.html?processid='+document.getElementById('processSelected').value">创建新申请</button>
 	</div>
     <div id="barArea">
 	<?php
-		require 'php/dblogin.php';
+		
 		$myapplyres=mysqli_query($con,"
 			select a.applyid,b.res,c.processname,a.applyname from 
 			(select applyid,processid,applyname from applyinfo where userid=$uid) a

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <?php 
-/*
+
 session_start();
 if (!isset($_SESSION['userid']))
 {
@@ -10,7 +10,7 @@ if (!isset($_SESSION['userid']))
 	';
 	exit();
 }
-*/
+
 require 'php/dblogin.php';
 ?>
 <html>
@@ -50,7 +50,7 @@ require 'php/dblogin.php';
 					<span style="margin-bottom:20px">选择要加入的流程</span>
 					<!--<input type="text" id="fieldid" name="fieldid" />-->
 					<div>
-						<select class="langselect" id="fieldname" name="fieldname" onchange="" style="float:left">
+						<select class="langselect" id="processname" name="processname" onchange="" style="float:left">
 							<?php
 							$processres=mysqli_query($con,"select processid,processname from processinfo");
 							$uid=$_SESSION['userid'];
@@ -93,6 +93,7 @@ require 'php/dblogin.php';
 if($_POST)
 {
 		$pname=$_POST["processname"];
+		//echo $pname;
 		$pidres=mysqli_query($con,"select processid from processinfo where processname='{$pname}'");
 		if (!$pidres) 
 		{
@@ -106,11 +107,12 @@ if($_POST)
 		$result=mysqli_query($con,"
 			insert into processmember
 			values
-			($uid,$pid,1);
+			($pid,$uid,1);
 		");
+		
 		if (!$result) 
 		{
-//			echo  mysqli_error($con);
+			//echo  mysqli_error($con);
 			echo '加入失败';
 			exit();
 		}

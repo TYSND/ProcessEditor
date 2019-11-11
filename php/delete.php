@@ -14,5 +14,20 @@ delete from processedge;
 $res4=mysqli_query($con,"
 delete from processvariety;
 ;");
+$res5=mysqli_query($con,"
+delete from processmember;
+;");
+$res6=mysqli_query($con,"
+delete from allapplyedge;
+;");
+$res7=mysqli_query($con,"
+delete from applyinfo;
+;");
+$res8=mysqli_query($con,"
+delete from applyres;
+;");
+$res9=mysqli_query($con,"
+delete from applyvariety;
+;");
 echo 'success';
 ?>

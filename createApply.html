@@ -46,9 +46,9 @@
 
 <body>
 	<h2>创建申请</h2>
-    <form id="barArea" method="POST" action="createApply.php">
+    <form id="barArea" method="POST" action="php/createApply.php">
 		<!--隐藏的input，值为流程的id-->
-		<input type="hidden" name="processid" value="1"/>
+		<input type="hidden" name="processid" value="<?php echo $_GET['processid'];?>"/>
 		<table>
 			<!--申请的标题默认为流程的名字-->
 			<tr>
@@ -59,30 +59,59 @@
 					<input name="applyname" value="该流程名"/>
 				</td>
 			</tr>
+<?php
+	require 'php/dblogin.php';
+	$pid=$_GET['processid'];
+	$pvres=mysqli_query($con,"
+		select * from processvariety
+		where
+		processid=$pid
+	;");
+	if(!$pvres)
+	{
+		echo 'process variety error';
+		exit();
+	}
+	while($pvrow=mysqli_fetch_array($pvres))
+	{
+		$v=$pvrow['variety'];
+echo <<<variety
 			<tr>
 				<td>
-					请假天数
+					$v
 				</td>
 				<td>
-					<input name="请假天数" value="4"/>
+					<input name="$v"/>
 				</td>
 			</tr>
-			<tr>
-				<td>
-					申请金额
-				</td>
-				<td>
-					<input name="申请金额" value="100"/>
-				</td>
-			</tr>
-			<tr>
-				<td>
-					从测加分
-				</td>
-				<td>
-					<input name="从测加分" value="-999999999"/>
-				</td>
-			</tr>
+variety;
+	}
+?>
+			<!-- <tr> -->
+				<!-- <td> -->
+					<!-- 请假天数 -->
+				<!-- </td> -->
+				<!-- <td> -->
+					<!-- <input name="请假天数" value="4"/> -->
+				<!-- </td> -->
+			<!-- </tr> -->
+			<!-- <tr> -->
+				<!-- <td> -->
+					<!-- 申请金额 -->
+				<!-- </td> -->
+				<!-- <td> -->
+					<!-- <input name="申请金额" value="100"/> -->
+				<!-- </td> -->
+			<!-- </tr> -->
+			<!-- <tr> -->
+				<!-- <td> -->
+					<!-- 综测加分 -->
+				<!-- </td> -->
+				<!-- <td> -->
+					<!-- <input name="从测加分" value="-999999999"/> -->
+				<!-- </td> -->
+			<!-- </tr> -->
+			
 		</table>
 		其它说明
 		<textarea width="40" height="20" name="applyreason">

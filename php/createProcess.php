@@ -4,7 +4,7 @@
 	require 'dblogin.php';
 	
 	$jstr=$_POST['jstr'];
-	$pname='default';
+	//$pname=$_POST[''];
 	
 	//echo $jstr;
 	
@@ -19,11 +19,14 @@
 	//echo $sql;
 mysqli_begin_transaction(MYSQLI_TRANS_START_READ_WRITE);
 mysqli_autocommit($con,FALSE); 
-	$res=mysqli_query($con,"insert into processinfo values ($pid,'{$pname}',$uid);");
+	
 //echo 'info '.$res.'<br/>';
 	$arr=json_decode($jstr,true);
+	//print_r($arr);
+	$pname=$arr['title'];
 	
-	
+	$res=mysqli_query($con,"insert into processinfo values ($pid,'{$pname}',$uid);");
+	$res=mysqli_query($con,"insert into processmember values ($pid,$uid,0);");
 //print_r($arr);
 	$cnt=2;
 	$staarr=Array();

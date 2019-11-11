@@ -70,4 +70,5 @@
 	}
 	
 	$json=json_encode($arr);
+	echo $json;
 ?>
