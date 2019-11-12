@@ -35,14 +35,18 @@ function processEditor(){
 			newVar.className='category fl';
 			varArea.appendChild(newVar);
 		},
+		addReviewer:function(){
+			var reviewerArea=document.getElementById('reviewerArea');
+			var reviewerInput=document.getElementById('reviewerInput');
+			var newReviewer=document.createElement('div');
+			newReviewer.innerHTML=reviewerInput.value;
+			reviewerInput.value='';
+			newReviewer.className='category fl';
+			reviewerArea.appendChild(newReviewer);
+		},
 	}
 	
-	this.initial=function(arr_reviewers){
-		reviewers=arr_reviewers;
-		for (var i=0;i<reviewers.length;i++)
-		{
-			edges[reviewers[i]]=[];
-		}
+	this.initial=function(){
 		/*add default start&end node*/
 		this.createNode("start");
 		this.createNode("end");
@@ -60,16 +64,38 @@ function processEditor(){
 					</div>
 					<div id='varArea' style='width:80%'></div>
 					<div class='killFloat'></div>
+					<div>
+						输入审核人<input id='reviewerInput'/>
+					<button onclick='processeditor.subWin.addReviewer();'>添加审核人</button>
+					</div>
+					<div id='reviewerArea' style='width:80%'></div>
+					<div class='killFloat'></div>
 					`,
 					function(){
 						log(vars);
 						that.processTitle=get("processTitle").value;
+						/*push inputed varietys into array*/
 						var varArea=get('varArea');
 						for (var i=0;i<varArea.childNodes.length;i++){
 							log("child node:"+varArea.childNodes[i]);
 							vars.push(varArea.childNodes[i].innerHTML);
 						}
-						log(vars);
+						log("varietys:"+vars);
+						/*push inputed reviewers into array*/
+						var reviewerArea=get('reviewerArea');
+						for (var i=0;i<reviewerArea.childNodes.length;i++){
+							log("child node:"+reviewerArea.childNodes[i]);
+							reviewers.push(reviewerArea.childNodes[i].innerHTML);
+						}
+						/*don't forget start node & end node*/
+						reviewers.push("start");
+						reviewers.push("end");
+						log("reviewers:"+reviewers);
+						/*initial edegs array*/
+						for (var i=0;i<reviewers.length;i++)
+						{
+							edges[reviewers[i]]=[];
+						}
 					}
 				);
 	}
