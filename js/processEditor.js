@@ -4,7 +4,7 @@ function processEditor(){
 	this.processTitle="";
 	var nodes=[];	//all nodes
 	
-	var vars=["money","天","people"];	//all judging variety
+	var vars=[];	//all judging variety
 	
 	/*all reviewer id.also donates nodes id.
 	 *have "start" and "end" node in initial
@@ -24,6 +24,19 @@ function processEditor(){
 	var canvasWidth=get("canvas").width,canvasHeight=get("canvas").height;
 	
 	
+	this.subWin={
+		/*object store all subWin's function*/
+		addVar:function(){
+			var varArea=document.getElementById('varArea');
+			var varInput=document.getElementById('varInput');
+			var newVar=document.createElement('div');
+			newVar.innerHTML=varInput.value;
+			varInput.value='';
+			newVar.className='category fl';
+			varArea.appendChild(newVar);
+		},
+	}
+	
 	this.initial=function(arr_reviewers){
 		reviewers=arr_reviewers;
 		for (var i=0;i<reviewers.length;i++)
@@ -37,9 +50,26 @@ function processEditor(){
 		nodeHeight=get("start").offsetHeight;
 		get("start").style.top=(canvasHeight/2)+"px";
 		get("end").style.top=(canvasHeight/2)+"px";get("end").style.left=(canvasWidth-nodeWidth)+"px";
-		openSubWin("<div class='titlefont'>input process title</div><input type='text' id='processTitle'/>",
+		openSubWin(`
+					<div>
+						输入流程标题<input type='text' id='processTitle'/>
+					</div>
+					<div>
+						输入变量<input id='varInput'/>
+					<button onclick='processeditor.subWin.addVar();'>添加变量</button>
+					</div>
+					<div id='varArea' style='width:80%'></div>
+					<div class='killFloat'></div>
+					`,
 					function(){
+						log(vars);
 						that.processTitle=get("processTitle").value;
+						var varArea=get('varArea');
+						for (var i=0;i<varArea.childNodes.length;i++){
+							log("child node:"+varArea.childNodes[i]);
+							vars.push(varArea.childNodes[i].innerHTML);
+						}
+						log(vars);
 					}
 				);
 	}
