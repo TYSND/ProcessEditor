@@ -40,7 +40,13 @@ mysqli_autocommit($con,FALSE);
 $staarr[$anval]=$cnt;
 		$cnt++;
 	}
-	
+	foreach($arr['vars'] as $ankey=>$anval)
+	{
+//echo $cnt.' '.$anval.'<br/>';
+		$res1=mysqli_query($con,"insert into processvariety values ($pid,'{$anval}');");
+		$res=$res&$res1;
+//echo $anval.' '.$res.'<br/>';
+	}
 	foreach($arr['edges'] as $aekey=>$aeval)
 	{
 		$fn=$aeval['from'];
@@ -55,8 +61,7 @@ $staarr[$anval]=$cnt;
 		if($vname!="")
 		{
 			//echo $f.' '.$t.' '.$vname.' '.$vl.' '.$vh.'<br/>';
-			$res1=mysqli_query($con,"insert into processvariety values ($pid,'{$vname}');");
-			$res=$res&$res1;
+			
 //echo $f.' '.$t.' '.$vname.' '.$vl.' '.$vh.' '.$res.'<br/>';
 
 			$res1=mysqli_query($con,"insert into processedge values ($pid,$f,$t,'{$vname}',$vl,$vh);");
