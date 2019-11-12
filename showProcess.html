@@ -1,0 +1,154 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<title>查看流程</title>
+	<link href="css/public.css" rel="stylesheet" type="text/css" />
+	<script src="js/dragElement.js"></script>
+	<script src="js/util.js"></script>
+	<script src="js/processEditor.js"></script>
+	<style>
+		.processNode{
+			position:absolute;
+			width:auto;
+			min-width:40px;
+			padding:5px 10px 5px 10px;
+			height:45px;
+			border-radius:23px;
+			box-shadow:0 0 1px 2px #CCC;
+			border:2px outset black;
+			padding-top:12px;
+			background:white;
+			color:black;
+			
+			text-align:center;
+			
+			font-size:26px;
+			font-family:"微软雅黑";
+		}
+		
+		.processNodeSelected{
+			position:absolute;
+			min-width:40px;
+			height:45px;
+			padding:5px 10px 5px 10px;
+			border-radius:23px;
+			box-shadow:0 0 1px 2px #CCC;
+			border:2px outset black;
+			padding-top:12px;
+			background:rgba(7, 101, 145, 0.84);
+			color:white;
+			
+			text-align:center;
+			
+			font-size:26px;
+			font-family:"微软雅黑";
+			
+		}
+		
+		.varietyText{
+			position:absolute;
+			color:white;
+			text-shadow:0 0 3px black;
+			font-size:16px;
+			font-family:"微软雅黑";
+			
+		}
+		
+		.processNode:hover{
+			cursor:move;
+		}
+		
+		.submitBut{
+			min-width:100px;
+			height:50px;
+			background:#CCC;
+			font-size:20px;
+		}
+		
+	</style>
+</head>
+
+<body>
+
+	<div class="fl" style="width:1000px">
+		<div id="editArea" style="width:1000px;height:600px;">
+			<canvas width="1000" height="600" id="canvas" style="border:1px solid #CCC">
+			</canvas>
+		</div>
+	</div>
+	<div class="fl" style="margin-left:30px">
+	</div>
+	<div class="killFloat"></div>
+	<script>
+		//初始化放在最后，防止get不到未加载的DOM元素
+		processeditor=new processEditor();
+		processeditor.drawApply(<?php
+	$pid=$_GET['processid'];
+	$arr=Array();
+	require 'php/dblogin.php';
+	
+	$nodesres=mysqli_query($con,"
+		select usersta,meaning from procstameaning
+		where
+		processid=$pid
+	;");
+	if(!$nodesres)
+	{
+		echo 'nodes error';
+		exit();
+	}
+	$tmpnodes=Array();
+	while($nodesrow=mysqli_fetch_array($nodesres))
+	{
+	//echo 'node '.$nodesrow['meaning'].'<br/>';
+		$tmpnodes[$nodesrow['usersta']]=$nodesrow['meaning'];
+		$arr['nodes'][]=$nodesrow['meaning'];
+		//array_push($arr['nodes'],"'{$nodesrow['meaning']}'");
+	}
+
+	$edgeres=mysqli_query($con,"
+		select * from processedge
+		where
+		processid=$pid
+	;");
+	if(!$edgeres)
+	{
+		echo 'edge error';
+		exit();
+	}
+	while($edgerow=mysqli_fetch_array($edgeres))
+	{
+		$tmpedge=Array();
+		$fs=$edgerow['fromusersta'];
+		$ts=$edgerow['tousersta'];
+		$v=$edgerow['variety'];
+		$vl=$edgerow['leftval'];
+		$vr=$edgerow['rightval'];
+		
+
+		$tmpedge['from']=$tmpnodes[$edgerow['fromusersta']];
+		$tmpedge['to']=$tmpnodes[$edgerow['tousersta']];
+		$tmpedge['varName']=$v;
+		$tmpedge['varLow']=$vl;
+		$tmpedge['varHi']=$vr;
+		$tmpedge['status']=0;
+		$arr['edges'][]=$tmpedge;
+		//array_push($arr['edges'],$tmpedge);
+	}
+	//print_r($arr);
+	$json=json_encode($arr);
+	echo $json;
+?>);
+		/*
+		processeditor.drawApply({"title":"jsjfjds","nodes":["start","end","lll","ppp"],
+		"edges":[{"from":"lll","to":"end","varName":"","varLow":"","varHi":"","status":"2"},
+				{"from":"ppp","to":"end","varName":"money","varLow":"0","varHi":"100","status":"2"},
+				{"from":"start","to":"lll","varName":"money","varLow":"0","varHi":"100","status":"0"},
+				{"from":"start","to":"ppp","varName":"","varLow":"","varHi":"","status":"1"}]});
+		*/
+		log("initialize ready");
+	</script>
+</body>
+</html>
