@@ -49,6 +49,32 @@
 	<h2>我的流程</h2>
     <button onclick="location.href='createProcess.html'">创建申请</button>
 	<table>
+	<?php
+		require 'php/dblogin.php';
+		$plstres=mysqli_query($con,"
+			select processid,processname from processinfo
+			where
+			authorid=$uid
+		;");
+		if(!$plstres)
+		{
+			echo 'process error';
+			exit();
+		}
+		while($plstrow=mysqli_fetch_array($plstres))
+		{
+			$pid=$plstrow['processid'];
+			$pname=$plstrow['processname'];
+echo <<<processinfo
+		<tr>
+			<td >
+				<a href="showProcess.html?processid=$pid">$pname</a>
+			</td>
+		</tr>
+processinfo;
+		}
+	?>
+	<!--
 		<tr>
 			<td>
 				请假流程
@@ -64,6 +90,7 @@
 				憨批综测流程
 			</td>
 		</tr>
+	-->
 	</table>
 </body>
 </html>
