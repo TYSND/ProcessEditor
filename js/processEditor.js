@@ -87,11 +87,10 @@ function processEditor(){
 							log("child node:"+reviewerArea.childNodes[i]);
 							reviewers.push(reviewerArea.childNodes[i].innerHTML);
 						}
-						/*don't forget start node & end node*/
-						reviewers.push("start");
-						reviewers.push("end");
 						log("reviewers:"+reviewers);
 						/*initial edegs array*/
+						edges["start"]=[]
+						edges["end"]=[];
 						for (var i=0;i<reviewers.length;i++)
 						{
 							edges[reviewers[i]]=[];
@@ -300,6 +299,9 @@ function processEditor(){
 		var jstr={};
 		jstr.title=that.processTitle;
 		jstr.nodes=[];
+		jstr.vars=[];
+		for (var i in vars)
+			jstr.vars.push(vars[i]);
 		for (var i in nodes)
 			jstr.nodes.push(nodes[i].reviewer);
 		jstr.edges=[];
