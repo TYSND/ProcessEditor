@@ -1,6 +1,6 @@
 <?php
 	require 'dblogin.php';
-	$pid=$_GET['processid'];
+	$pid=$_POST['processid'];
 	$jstr=$_POST['jstr'];
 	$arr=json_decode($jstr,true);
 	

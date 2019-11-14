@@ -3,6 +3,7 @@ function get(id){
 }
 
 function openSubWin(innerHtml,beforeUnloadFunc){
+	/*use fixed full screen div to simulate sub window*/
 	var subWin=document.createElement("div");
 	subWin.style="	width:"+window.outerWidth+"px;height:"+window.outerHeight+"px;\
 					position:fixed;background:rgba(15, 19, 66, 0.55);top:0;left:0;";
@@ -29,6 +30,14 @@ function geturlpara(nowurl,paraname){
 
 function log(str){
 	console.log(str);
+}
+
+function hiddenInput(name,value){
+	var input=document.createElement("input");
+	input.hidden="hidden";
+	input.name=name;
+	input.value=value;
+	return input;
 }
 
 var util={
