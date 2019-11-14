@@ -1,74 +1,95 @@
 <?php
-	$aid=$_GET['applyid'];
+	require 'php/dblogin.php';
+	$pid=$_GET['processid'];
 	$arr=Array();
-	require 'dblogin.php';
-	$pidres=mysqli_query($con,"
-		select processid from applyinfo
+	$pmemres=mysqli_query($con,"
+		select userid from processmember
 		where
-		applyid=$aid
+		processid=$pid and usersta>0
 	;");
-	if(!$pidres)
+	if(!$pmemres)
 	{
-		echo 'apply error';
+		echo '';
 		exit();
 	}
-	$pidrow=mysqli_fetch_array($pidres);
-	$pid=$pidrow['processid'];
-	
-	$nodesres=mysqli_query($con,"
-		select usersta,meaning from procstameaning
+	while($pmemrow=mysqli_fetch_array($pmemres))
+	{
+		$uid=$pmemrow['userid'];
+		$nickres=mysqli_query($con,"
+			select nick from userinfo
+			where
+			userid=$uid
+		;");
+		if(!$nickres)
+		{
+			echo "";
+			exit();
+		}
+		$nickrow=mysqli_fetch_array($nickres);
+		$nick=$nickrow['nick'];
+		
+		$tmpu=Array();
+		$tmpu['id']=$uid;
+		$tmpu['name']=$nick;
+		$arr['users'][]=$tmpu;
+	}
+		
+	$psmres=mysqli_query($con,"
+		select * from procstameaning
 		where
 		processid=$pid
 	;");
-	if(!$nodesres)
+	if(!$psmres)
 	{
-		echo 'nodes error';
+		echo "";
 		exit();
-	}
-	$tmpnodes=Array();
-	while($nodesrow=mysqli_fetch_array($nodesres))
-	{
-		$tmpnodes[$nodesrow['usersta']]=$nodesrow['meaning'];
-		array_push($arr['nodes'],$nodesrow['meaning']);
-	}
-	$edgeres=mysqli_query($con,"
-		select * from allapplyedge
-		where
-		applyid=$aid
-	;");
-	if(!$edgeres)
-	{
-		echo 'edge error';
-		exit();
-	}
-	while($edgerow=mysqli_fetch_array($edgeres))
-	{
-		$tmpedge=Array();
-		$fs=$edgerow['fromusersta'];
-		$ts=$edgerow['tousersta'];
-		$pvres=mysqli_query($con,"
-			select variety,leftval,rightval from processedge
-			where
-			processid=$pid
-			and fromusersta=$fs
-			and tousersta=$ts
-		;");
-		if(!$pvres)
-		{
-			echo 'pv error';
-			exit();
-		}
-		$pvrow=mysqli_fetch_array($pvres);
-		$tmpedge['from']=$tmpnodes[$edgerow['fromusersta']];
-		$tmpedge['to']=$tmpnodes[$edgerow['tousersta']];
-		$tmpedge['varName']=$pvrow['variety'];
-		$tmpedge['varLow']=$pvrow['leftval'];
-		$tmpedge['varHi']=$pvrow['rightval'];
-		$tmpedge['status']=$edgerow['res'];
-		
-		array_push($arr['edges'],$tmpedge);
 	}
 	
+	while($psmrow=mysqli_fetch_array($psmres))
+	{
+		$usta=$psmrow['usersta'];
+		$pos=$psmrow['meaning'];
+		if($pos=="start"||$pos=="end") continue;
+		//echo $usta.' '.$pos.'<br/>';
+		$pmemres=mysqli_query($con,"
+			select userid from processmember
+			where
+			processid=$pid and usersta=$usta
+		;");
+		if(!$pmemres)
+		{
+			echo '';
+			exit();
+		}
+		$pmemrow=mysqli_fetch_array($pmemres);
+		$uid=$pmemrow['userid'];
+		if($uid!="")
+		{
+			$nickres=mysqli_query($con,"
+				select nick from userinfo
+				where
+				userid=$uid
+			;");
+			if(!$nickres)
+			{
+				echo "";
+				exit();
+			}
+			$nickrow=mysqli_fetch_array($nickres);
+			$nick=$nickrow['nick'];
+		}
+		else
+		{
+			$nick="";
+		}
+		
+		
+		$tmpp=Array();
+		$tmpp['pos']=$pos;
+		$tmpp['userid']=$uid;
+		$arr['positions'][]=$tmpp;
+	}
 	$json=json_encode($arr);
 	echo $json;
+	
 ?>
