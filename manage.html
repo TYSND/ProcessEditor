@@ -6,10 +6,107 @@
 <link href="css/public.css" rel="stylesheet" type="text/css" />
 <script src="js/roleManager.js"></script>
 <script src="js/util.js"></script>
+<?php
+	require 'php/dblogin.php';
+	$pid=$_GET['processid'];
+	$arr=Array();
+	$pmemres=mysqli_query($con,"
+		select userid from processmember
+		where
+		processid=$pid and usersta>0
+	;");
+	if(!$pmemres)
+	{
+		echo '';
+		exit();
+	}
+	while($pmemrow=mysqli_fetch_array($pmemres))
+	{
+		$uid=$pmemrow['userid'];
+		$nickres=mysqli_query($con,"
+			select nick from userinfo
+			where
+			userid=$uid
+		;");
+		if(!$nickres)
+		{
+			echo "";
+			exit();
+		}
+		$nickrow=mysqli_fetch_array($nickres);
+		$nick=$nickrow['nick'];
+		
+		$tmpu=Array();
+		$tmpu['id']=$uid;
+		$tmpu['name']=$nick;
+		$arr['users'][]=$tmpu;
+	}
+		
+	$psmres=mysqli_query($con,"
+		select * from procstameaning
+		where
+		processid=$pid
+	;");
+	if(!$psmres)
+	{
+		echo "";
+		exit();
+	}
+	
+	while($psmrow=mysqli_fetch_array($psmres))
+	{
+		$usta=$psmrow['usersta'];
+		$pos=$psmrow['meaning'];
+		if($pos=="start"||$pos=="end") continue;
+		//echo $usta.' '.$pos.'<br/>';
+		$pmemres=mysqli_query($con,"
+			select userid from processmember
+			where
+			processid=$pid and usersta=$usta
+		;");
+		if(!$pmemres)
+		{
+			echo '';
+			exit();
+		}
+		$pmemrow=mysqli_fetch_array($pmemres);
+		$uid=$pmemrow['userid'];
+		if($uid!="")
+		{
+			$nickres=mysqli_query($con,"
+				select nick from userinfo
+				where
+				userid=$uid
+			;");
+			if(!$nickres)
+			{
+				echo "";
+				exit();
+			}
+			$nickrow=mysqli_fetch_array($nickres);
+			$nick=$nickrow['nick'];
+		}
+		else
+		{
+			$nick="";
+		}
+		
+		
+		$tmpp=Array();
+		$tmpp['pos']=$pos;
+		$tmpp['userid']=$uid;
+		$arr['positions'][]=$tmpp;
+	}
+	$json=json_encode($arr);
+	//echo $json;
+	
+?>
 <script>
 	var rolemanager;
 	window.onload=function(){
 		rolemanager=new roleManager();
+		rolemanager.initial(<?php echo $json;?>);
+		/*
 		rolemanager.initial({
 								users:[
 									{
@@ -35,13 +132,48 @@
 										userid:"",
 									},
 								]
-							});
+							});*/
 	}
 </script>
 </head>
 <body>
 <h2>管理流程角色</h2>
 <table >
+<?php
+	foreach($arr['positions'] as $apkey=>$apval)
+	{
+		$pos=$apval['pos'];
+		$uid=$apval['userid'];
+		$nick="";
+		foreach($arr['users'] as $aukey=>$auval)
+		{
+			if($auval['id']==$uid)
+				$nick=$auval['name'];
+		}
+echo "
+	<tr>
+		<td>
+			$pos
+		</td>
+		<td>
+			<select id=\"$pos\">
+				<!--若未决定该角色的用户则为空-->
+				";
+				if($uid=="")
+					echo "<option selected value=\"\"> --- 空 --- </option>";
+				else
+					echo "<option selected value=\"1\">$nick</option>";
+				//<!--若已决定该角色的用户则value为该用户id,option内为名字
+echo "				
+			</select>
+				<!--点击清空该select已选的选项-->
+			<button onclick=\"rolemanager.resetSelect(\"$pos\")\">重置</button>
+		</td>
+	</tr>
+";
+	}
+
+/*
 	<tr>
 		<td>
 			校长
@@ -74,6 +206,8 @@
 			<button onclick="rolemanager.resetSelect('主任')">重置</button>
 		</td>
 	</tr>
+	*/
+?>
 </table>
 <button id="submitBut">提交</button>
 </body>
