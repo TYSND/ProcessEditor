@@ -207,6 +207,8 @@ function processEditor(){
 		//ctx.lineCap="butt";
 		ctx.beginPath();
 		from=get(from);to=get(to);
+		log("from to:");
+		log(from);log(to);
 		ctx.moveTo(from.offsetLeft+nodeWidth/2,from.offsetTop+nodeHeight/2);
 		ctx.lineTo(to.offsetLeft+nodeWidth/2,to.offsetTop+nodeHeight/2);
 		ctx.stroke();
