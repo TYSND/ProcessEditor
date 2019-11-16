@@ -17,15 +17,6 @@
 <title>首页</title>
 	<link href="css/public.css" rel="stylesheet" type="text/css" />
 	<style>
-		.rightFont{
-			color:#4BB82C;
-			font-weight:bold;
-		}
-		.wrongFont{
-			color:#D51E47;
-			font-weight:bold;
-		}
-		
 		.bar{
 			width:25%;
 			padding-left:5%;
@@ -42,54 +33,19 @@
 			margin-top:6px;
 		}
 		
-		#navigatorBar{
-			position:fixed;
-			top:0;left:0;
-			width:10%;
-			background:rgb(63, 63, 140);
-			color:white;
-		}
 		
-		.navBarItem{
-			margin:10px 0 10px 0 ;
-			text-align:center;
-			width:100%;
-			
-		}
 		
-		a:link{
-			color:white;
-			text-decoration:none;
-		}
-		a:hover{
-			color:white;
-			text-decoration:none;
-		}
-		a:visited{
-			color:white;
-			text-decoration:none;
-		}
-		a:active{
-			color:white;
-			text-decoration:none;
-		}
+
 	</style>
 </head>
 
 <body>
-	<h2>首页</h2>
-	<div id="navigatorBar">
-		<div class="" style="width:100%">
-			<div class="navBarItem"><a href="myApply.html">我的申请</a></div>
-			<div class="navBarItem"><a href="myCheck.html">我的审核</a></div>
-			<div class="navBarItem"><a href='myProcess.html'>我的流程</a></div>
-		</div>
-	</div>
-	<script>
-		document.getElementById('navigatorBar').style.height=window.outerHeight+"px";
-	</script>
-    <button onclick="location.href='myApply.html'">我的申请</button>
-	<button onclick="location.href='myCheck.html'">我的审核</button>
-	<button onclick="location.href='myProcess.html'">我的流程</button>
+	<?php require 'php/publicLeft.php'; ?>
+	<rBody>
+		<h2>首页</h2>
+		<button onclick="location.href='myApply.html'">我的申请</button>
+		<button onclick="location.href='myCheck.html'">我的审核</button>
+		<button onclick="location.href='myProcess.html'">我的流程</button>
+	</rBody>
 </body>
 </html>

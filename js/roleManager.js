@@ -31,8 +31,8 @@ function roleManager(){
 		}
 		for (var i in jstr.positions){
 			posi[jstr.positions[i].pos]=jstr.positions[i].userid;
-			if (jstr.positions[i].userid!="")
-				assignPos(jstr.positions[i].pos,jstr.positions[i].userid);
+			if (jstr.positions[i].userid!=null)
+				that.assignPos(jstr.positions[i].pos,jstr.positions[i].userid);
 			get(jstr.positions[i].pos).addEventListener("click",that.genOptFor);
 			get(jstr.positions[i].pos).addEventListener("change",that.assignPos);
 		}

@@ -1,3 +1,9 @@
+body{
+	margin:0 0 0 0;
+	padding:0 0 0 0;
+	background:rgb(253,252,248);
+}
+
 .bar{
 	background:white;
 	margin-bottom:20px;
@@ -35,13 +41,86 @@ a{
 }
 a:link {
 	color:#000;
-	text-decoration:underline;
+	text-decoration:none;
 }
 a:visited {
 	color:#000;
-	text-decoration:underline;
+	text-decoration:none;
 }
 a:hover {
 	color:#000;
- 	text-decoration:underline;
+ 	text-decoration:none;
+}
+
+lBody{
+	margin-left:10%;
+	float:left;
+	width:15%;
+}
+
+rBody{
+	padding-left:5%;
+	margin-left:2%;
+	float:left;
+	width:60%;
+	min-height:1000px;
+	margin-top:6px;
+	border-left:2px groove rgba(204,204,204,0.4);	
+	border-right:2px groove rgba(204,204,204,0.4);
+}
+
+#navigatorBar{
+	width:100%;
+	color:black;
+	border-left:2px groove rgba(204,204,204,0.4);
+	border-top:2px groove rgba(204,204,204,0.4);
+	border-bottom:2px groove rgba(204,204,204,0.4);
+}
+
+.navBarItem{
+	margin:5px 0 5px 0;
+	padding:10px 0 10px 0;
+	text-align:center;
+	width:100%;
+	color:black;
+}
+
+.navBarItem a{
+	color:black;
+}
+
+.navBarItem a:link{
+	color:black;
+}
+
+.navBarItem a:hover{
+	color:white;
+}
+
+.navBarItem a:visited{
+	color:black;
+}
+
+.navBarItem:hover{
+	background:rgba(36, 33, 33, 0.71);
+	color:white;
+}
+
+.navBarItem:hover a{
+	color:white;
+}
+
+
+.rightFont{
+	color:#4BB82C;
+	font-weight:bold;
+}
+
+.wrongFont{
+	color:#D51E47;
+	font-weight:bold;
+}
+
+h1{
+	margin-left:10%;
 }
