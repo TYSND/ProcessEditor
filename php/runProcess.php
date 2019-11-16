@@ -2,10 +2,10 @@
 	session_start();
 	require 'dblogin.php';
 	$uid=$_SESSION['userid'];
-	$aid=$_POST['applyid'];
-	$res=$_POST['res'];
-	
-	$ainfoes=mysqli_query($con,"
+	$aid=$_GET['applyid'];
+	$res=$_GET['res'];
+
+	$ainfores=mysqli_query($con,"
 		select * from applyinfo
 		where
 		applyid=$aid
@@ -19,6 +19,19 @@
 	$pid=$ainforow['processid'];
 	$appuid=$ainforow['userid'];//申请人id
 	$aname=$ainforow['applyname'];
+	
+	$mystares=mysqli_query($con,"
+		select usersta from processmember
+		where
+		processid=$pid and userid=$uid
+	;");
+	if(!$mystares)
+	{
+		echo 'my sta error';
+		exit();
+	}
+	$mystarow=mysqli_fetch_array($mystares);
+	$mysta=$mystarow['usersta'];
 	/*
 		0 待审核 
 		1 通过
@@ -52,10 +65,10 @@
 			where applyid=$aid
 		;");
 		$upres2=mysqli_query($con,"
-			update allapplyres
+			update allapplyedge
 			set res=2,checktime='{$cdt}'
 			where
-			applyid=$aid and fromusersta=$uid
+			applyid=$aid and fromusersta=$mysta
 		;");
 		if($upres1&&$upres2)
 		{
@@ -75,36 +88,40 @@
 		mysqli_autocommit($con,FALSE);
 		$flag=1;
 		$upres=mysqli_query($con,"
-			update allapplyres
+			update allapplyedge
 			set res=1,checktime='{$cdt}'
 			where
-			applyid=$aid and fromusersta=$uid
+			applyid=$aid and fromusersta=$mysta
 		;");
 		$flag=$flag&$upres;
+echo 'update allapplyedge '.$flag.'<br/>';
 		$nxtres=mysqli_query($con,"
 			select tousersta from allapplyedge
 			where
-			applyid=$aid and fromusersta=$uid
+			applyid=$aid and fromusersta=$mysta
 		;");
 		$flag=$flag&$nxtres;
+echo 'select nxt '.$flag.'<br/>';
 		while($nxtrow=mysqli_fetch_array($nxtres))
 		{
 			$nxt=$nxtrow['tousersta'];
 			//查询nxt点的所有入边是否都通过，若都通过，则提醒nxt
 			$indres=mysqli_query($con,"
-				select count(*) as ind from allapplyres
+				select count(*) as ind from allapplyedge
 				where
 				applyid=$aid and tousersta=$nxt
 			;");
 			$flag=$flag&$indres;
+echo 'select nxt ind '.$flag.'<br/>';
 			$indrow=mysqli_fetch_array($indres);
 			
 			$indokres=mysqli_query($con,"
-				select count(*) as ind from allapplyres
+				select count(*) as ind from allapplyedge
 				where
 				applyid=$aid and tousersta=$nxt and res=1
 			;");
 			$flag=$flag&$indokres;
+echo 'select nxt ok ind '.$flag.'<br/>';
 			$indokrow=mysqli_fetch_array($indokres);
 			
 			if($indrow['ind']==$indokrow['ind'])
@@ -115,6 +132,7 @@
 					processid=$pid and usersta=$nxt
 				;");
 				$flag=$flag&$nxtmeanres;
+echo 'select nxt sta mean '.$flag.'<br/>';				
 				$nxtmeanrow=mysqli_fetch_array($nxtmeanres);
 				if($nxtmeanrow['meaning']=='end')
 				{
@@ -145,6 +163,7 @@
 						processid=$pid and usersta=$nxt
 					;");
 					$flag=$flag&$nuidres;
+echo 'select nxt user '.$flag.'<br/>';					
 					$nuidrow=mysqli_fetch_array($nuidres);
 					$nuid=$nuidrow['userid'];
 					$nemailres=mysqli_query($con,"
@@ -153,6 +172,7 @@
 						userid=$nuid
 					;");
 					$flag=$flag&$nemailres;
+echo 'select nxt email '.$flag.'<br/>';
 					$nemailrow=mysqli_fetch_array($nemailres);
 					$email=$nemailrow['email'];
 					

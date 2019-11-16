@@ -113,10 +113,12 @@
 				<?php
 				while($avrow=mysqli_fetch_array($avres))
 				{
+					$avvar=$avrow['variety'];
+					$avval=$avrow['val'];
 					echo <<<tr
 						<tr>
-							<td>$avrow['variety']</td>
-							<td>$avrow['val']</td>
+							<td>$avvar</td>
+							<td>$avval</td>
 						</tr>
 tr;
 				}
@@ -155,8 +157,8 @@ tr;
 				?>
 			</div>
 		</div>
-		<button class="submitBut" style="margin-right:30%">通过该申请</button>
-		<button class="submitBut">拒绝该申请</button>
+		<button class="submitBut" style="margin-right:30%" onclick="location.href='php/runProcess.php?applyid=<?php echo $aid;?>&res=1'">通过该申请</button>
+		<button class="submitBut" onclick="location.href='php/runProcess.php?applyid=<?php echo $aid;?>&res=2'">拒绝该申请</button>
 	</div>
 	
 </body>

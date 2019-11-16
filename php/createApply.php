@@ -114,4 +114,122 @@ else
 	echo 'error'.'<br/>';
 }
 mysqli_autocommit($con,TRUE);
+//循环将入度，出度为0的点删除（除start和end），直至没有相应的点
+$stop=false;
+//$cnt=20;
+$vis=Array();
+while(1)
+{
+	//echo $cnt.'<br/>';
+	//$cnt--;
+	//if($cnt==0)	break;
+	if($stop)	break;
+	$stop=true;
+	//delete all nodes that indegree==0 with all edges that fromusersta=this node
+	$ind0res=mysqli_query($con,"
+		select usersta from procstameaning a
+		where
+		processid=$pid and
+		usersta!=2 and usersta!=3 and
+		(select count(*) from allapplyedge where applyid=$aid and tousersta=a.usersta)=0
+	;");
+	if(!$ind0res)
+	{
+		echo 'indegree error';
+		exit();
+	}
+	//echo 'ind////////////////';
+	while($ind0row=mysqli_fetch_array($ind0res))
+	{
+		//$stop=false;
+		$usta=$ind0row['usersta'];
+		if($usta=="")
+		{
+			//$stop=false;
+			break;
+		}
+		if(in_array($usta,$vis))
+		{
+			continue;
+		}
+		array_push($vis,$usta);
+		//echo $usta;
+		$stop=false;
+		$dres=mysqli_query($con,"
+			delete from allapplyedge
+			where
+			applyid=$aid and fromusersta=$usta
+		;");
+		if(!$dres)
+		{
+			echo 'indegree delete error';
+			exit();
+		}
+	}
+	//echo '/////////////';
+	//echo '<br/>';
+	
+	//delete all nodes that outdegree==0 with all edges that tousersta=this node
+	$outd0res=mysqli_query($con,"
+		select usersta from procstameaning a
+		where
+		processid=$pid and
+		usersta!=2 and usersta!=3 and
+		(select count(*) from allapplyedge where applyid=$aid and fromusersta=a.usersta)=0
+	;");
+	if(!$outd0res)
+	{
+		echo 'outdegree error';
+		exit();
+	}
+	
+//echo 'out///////////////////////////////';
+	while($outd0row=mysqli_fetch_array($outd0res))
+	{
+		
+		$usta=$outd0row['usersta'];
+		if($usta=="")
+		{
+			//$stop=false;
+			break;
+		}
+		if(in_array($usta,$vis))
+		{
+			continue;
+		}
+		array_push($vis,$usta);
+		//echo $usta;
+		$stop=false;
+		$dres=mysqli_query($con,"
+			delete from allapplyedge
+			where
+			applyid=$aid and tousersta=$usta
+		;");
+		if(!$dres)
+		{
+			echo 'outdegree delete error';
+			exit();
+		}
+	}
+//echo '///////////////////';
+//echo '<br/>';
+/*
+
+select usersta from procstameaning a
+where
+processid=1 and 
+usersta!=2 and usersta!=3 and
+(select count(*) from allapplyedge where applyid=1 and tousersta=a.usersta)=0
+
+
+select usersta from procstameaning a
+where
+processid=1 and 
+usersta!=2 and usersta!=3 and
+(select count(*) from allapplyedge where applyid=1 and fromusersta=a.usersta)=0
+
+*/
+}
+
+
 ?>
