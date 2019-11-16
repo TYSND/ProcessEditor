@@ -5,10 +5,16 @@ function roleManager(){
 	var users={};
 	/*store id of users not assigned*/
 	var lastUsers=[];
-	/*public null option node,appended to reseted selects*/
-	var nullOpt=createOpt(" --- 空 --- ","","none");
+	
 	/*public handle */
 	var that=this;
+	
+	function nullOpt(){
+		/*public null option node,appended to reseted selects*/
+		var nullOpt=createOpt(" --- 空 --- ","","none");
+		return nullOpt;
+	}
+	
 	function createOpt(innerhtml,value,selected){
 		var tmp=document.createElement("option");
 		tmp.text=innerhtml;
@@ -45,9 +51,9 @@ function roleManager(){
 	this.assignPos=function(e){
 		var select=e.target;
 		var selectId=select.id;
-		if (posi[selectId]!="")
+		if (posi[selectId]!=null)
 			lastUsers.push(posi[selectId]);
-		if (select.value!="")
+		if (select.value!=null)
 			lastUsers.splice(lastUsers.indexOf(select.value),1);
 		posi[selectId]=select.value;
 		//select.addEventListener("click",that.genOptFor);
@@ -58,13 +64,14 @@ function roleManager(){
 	
 	this.resetSelect=function(selectId){
 		var select=get(selectId);
+		log("in reset");
 		if (select.value=="")	//already null
 			return;
 		/*restore selected user to lastUsers array*/
 		lastUsers.push(select.value);
 		while(select.options.length>0)
 			select.options.remove(0);
-		select.options.add(nullOpt,0);
+		select.options.add(nullOpt(),0);
 		select.value="";
 		posi[selectId]="";
 		log("reset");
@@ -102,7 +109,7 @@ function roleManager(){
 		}
 		log(newUser);
 		/*insert lastusers not in select's options*/
-		h.options.add(nullOpt,0);
+		h.options.add(nullOpt(),0);
 		newUser.splice(newUser.indexOf(""),1);
 		newUser.sort(function(a,b){
 			return a-b;
