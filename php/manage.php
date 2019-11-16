@@ -2,8 +2,10 @@
 	require 'dblogin.php';
 	$pid=$_POST['processid'];
 	$jstr=$_POST['jstr'];
+echo $jstr;
+echo '<br/>';
+//exit();
 	$arr=json_decode($jstr,true);
-	
 mysqli_begin_transaction(MYSQLI_TRANS_START_READ_WRITE);
 mysqli_autocommit($con,FALSE); 
 $res=1;
@@ -11,6 +13,7 @@ $res=1;
 	{
 		$upos=$aval['pos'];
 		$uid=$aval['userid'];
+		if($uid=="")	continue;
 		$pmres=mysqli_query($con,"
 			select usersta from procstameaning
 			where
@@ -21,9 +24,9 @@ $res=1;
 		$usta=$pmrow['usersta'];
 		
 		$inpmres=mysqli_query($con,"
-			insert into processmember
-			values
-			($pid,$uid,$usta)
+			update processmember set usersta=$usta
+			where
+			processid=$pid and userid=$uid
 		;");
 		$res&=$inpmres;
 	}

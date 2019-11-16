@@ -59,7 +59,7 @@
 		//显示这些申请
 		$mystares=mysqli_query($con,"
 			select a.processid,a.usersta,b.processname from
-			(select processid,usersta from processmember where userid=$uid and usersta!=0) a
+			(select processid,usersta from processmember where userid=$uid and usersta>1) a
 			left join
 			(select processid,processname from processinfo) b
 			on a.processid=b.processid

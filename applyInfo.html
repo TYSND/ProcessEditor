@@ -96,6 +96,7 @@
 		echo 'var error';
 		exit();
 	}
+	
 ?>
 <body>
 <?php require 'php/publicLeft.php'; ?>
@@ -147,6 +148,7 @@ tr;
 				</table>
 			</div>
 		</div>
+		
 		<div class="bar">
 			<h2>申请说明</h2>
 			<!--如果没有说明，则输出一个“无”-->
@@ -159,8 +161,10 @@ tr;
 				?>
 			</div>
 		</div>
+		
 		<button class="submitBut" style="margin-right:30%" onclick="location.href='php/runProcess.php?applyid=<?php echo $aid;?>&res=1'">通过该申请</button>
 		<button class="submitBut" onclick="location.href='php/runProcess.php?applyid=<?php echo $aid;?>&res=2'">拒绝该申请</button>
+	
 	</div>
 </rbody>	
 </body>
