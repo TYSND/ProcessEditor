@@ -137,11 +137,10 @@ function roleManager(){
 		}
 		log(jstr);
 		var form=document.createElement("form");
-		form.type="hidden";
 		form.method='POST';
 		form.action='php/manage.php';
 		document.body.appendChild(form);
-		form.appendChild(hiddenInput("jstr",jstr));
+		form.appendChild(hiddenInput("jstr",JSON.stringify(jstr)));
 		form.appendChild(hiddenInput("processid",geturlpara(location.href,"processid")));
 		form.submit();
 	}
