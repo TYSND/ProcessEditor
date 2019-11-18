@@ -6,16 +6,35 @@ session_start();
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>登录</title>
+<link href="css/public.css" rel="stylesheet" type="text/css" />
+<style>
+	.bar{
+		width:25%;
+	}
+	input{
+		margin-top:10px;
+		margin-bottom:10px;
+		margin-left:6px;
+	}
+</style>
 </head>
 
 <body>
-	<h2>登录</h2>
-	<form action="" method="POST">
-		<input name="email" size="20">邮箱</input>
-		<input type="password" name="password" size="20">密码</input>
-		<button type="submit">登录</button>
-		<button type="button" onclick="location.href='register.html'">注册</button>
-	</form>
+	<div style="width:100%">
+		<div style="text-align:center;margin:auto;margin-top:220px;" class="bar">
+			<h2>登录</h2>
+			<form action="" method="POST">
+				<div>
+					邮箱<input name="email" size="20"/>
+				</div>
+				<div>
+					密码<input type="password" name="password" size="20"/>
+				</div>
+				<button class="submitBut" style="width:25%;" type="submit">登录</button>
+				<button class="submitBut" style="width:25%;" type="button" onclick="location.href='register.html'">注册</button>
+			</form>
+		</div>
+	</div>
 	<?php
 		require 'php/dblogin.php';
 		if($_POST)
