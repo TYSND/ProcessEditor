@@ -54,40 +54,26 @@ function processEditor(){
 		nodeHeight=get("start").offsetHeight;
 		get("start").style.top=(canvasHeight/2)+"px";
 		get("end").style.top=(canvasHeight/2)+"px";get("end").style.left=(canvasWidth-nodeWidth)+"px";
-		openSubWin(`
-					<div>
-						输入流程标题<input type='text' id='processTitle'/>
-					</div>
-					<div>
-						输入变量<input id='varInput'/>
-					<button onclick='processeditor.subWin.addVar();'>添加变量</button>
-					</div>
-					<div id='varArea' style='width:80%'></div>
-					<div class='killFloat'></div>
-					<div>
-						输入审核人<input id='reviewerInput'/>
-					<button onclick='processeditor.subWin.addReviewer();'>添加审核人</button>
-					</div>
-					<div id='reviewerArea' style='width:80%'></div>
-					<div class='killFloat'></div>
-					`,
+		openSubWin(createProcessSubWinText,
 					function(){
-						log(vars);
+						//log(vars);
 						that.processTitle=get("processTitle").value;
 						/*push inputed varietys into array*/
 						var varArea=get('varArea');
-						for (var i=0;i<varArea.childNodes.length;i++){
-							log("child node:"+varArea.childNodes[i]);
+						/*skip first h2 "variety"*/
+						for (var i=1;i<varArea.childNodes.length;i++){
+							//log("child node:"+varArea.childNodes[i]);
 							vars.push(varArea.childNodes[i].innerHTML);
 						}
-						log("varietys:"+vars);
+						//log("varietys:"+vars);
 						/*push inputed reviewers into array*/
 						var reviewerArea=get('reviewerArea');
-						for (var i=0;i<reviewerArea.childNodes.length;i++){
-							log("child node:"+reviewerArea.childNodes[i]);
+						/*skip first h2 "reviewer"*/
+						for (var i=1;i<reviewerArea.childNodes.length;i++){
+							//log("child node:"+reviewerArea.childNodes[i]);
 							reviewers.push(reviewerArea.childNodes[i].innerHTML);
 						}
-						log("reviewers:"+reviewers);
+						//log("reviewers:"+reviewers);
 						/*initial edegs array*/
 						edges["start"]=[]
 						edges["end"]=[];
@@ -111,7 +97,7 @@ function processEditor(){
 	
 	this.createNode=function(reviewer){
 		/*create a new node into data structures and render to webpage*/
-		log(reviewer);
+		//log(reviewer);
 		reviewers.splice(reviewers.indexOf(reviewer),1);	//delete reviewer
 		var handle=document.createElement("div");	//create new node
 		handle.id=reviewer;
@@ -130,12 +116,11 @@ function processEditor(){
 	this.addNode=function(){
 		/*function after click add node button*/
 		if (reviewers.length==0){
-			alert("no more reviewers!");
+			alert("没有更多审核人了!");
 			return;
 		}
-		subWinStr="<div class='titlefont'>select reviewer:</div>\
-						<select id='reviewerSelect'>";
-		log("reviewers:"+reviewers);
+		var subWinStr=selectReviewerSubWinText;
+		//log("reviewers:"+reviewers);
 		for (var i=0;i<reviewers.length;i++)
 		{
 			subWinStr+="<option value='"+reviewers[i]+"'>"+reviewers[i]+"</option>";
@@ -170,7 +155,7 @@ function processEditor(){
 				ctx.clearRect(left2-side,top2-side,left2+side,top2+side);
 			}
 		}
-	//	log("clear ok");
+	//	//log("clear ok");
 	}
 	
 	
@@ -178,9 +163,7 @@ function processEditor(){
 		/*after move node,add edge,delete edge,delete node,
 		 *call this func to redraw all edges
 		 */
-		
-//		ctx.clearRect(0,0,c.width,c.height);
-		/*color for different status edges*/
+		/*color for different status edges.blue,green,red*/
 		var color=["rgba(90, 125, 174, 0.4)","rgba(61, 198, 61, 0.51)","rgba(217, 118, 118, 0.61)"];
 		for (var i in edges)
 		{
@@ -196,7 +179,7 @@ function processEditor(){
 				}
 			}
 		}
-	//	log("draw ok");
+	//	//log("draw ok");
 	}
 	
 	
@@ -206,10 +189,10 @@ function processEditor(){
 		ctx.lineWidth=width;
 		//ctx.lineCap="butt";
 		ctx.beginPath();
-		log("lineNodeToNode:"+from+"  "+to);
+		//log("lineNodeToNode:"+from+"  "+to);
 		from=get(from);to=get(to);
-		log("from to:");
-		log(from);log(to);
+		//log("from to:");
+		//log(from);//log(to);
 		ctx.moveTo(from.offsetLeft+nodeWidth/2,from.offsetTop+nodeHeight/2);
 		ctx.lineTo(to.offsetLeft+nodeWidth/2,to.offsetTop+nodeHeight/2);
 		ctx.stroke();
@@ -218,6 +201,7 @@ function processEditor(){
 	
 	this.addNormalEdge=function(){
 		/*function after click addedge button*/
+		disableButton('addEdgeBut');
 		this.createEdge("","","");
 	}
 	
@@ -226,17 +210,35 @@ function processEditor(){
 		/*function after click addVarEdge button.
 		 *get variety info before create edge
 		 */
-		var newWinText="<div>select variety:</div>\
-								<select id='varietySelect'>";
+		var newWinText="<div>选择变量</div>\
+								<select id='varietySelect' style='margin-top:10px;margin-bottom:10px;'>";
 		for (var i=0;i<vars.length;i++)
 			newWinText+="<option value='"+vars[i]+"'>"+vars[i]+"</option>";
-		newWinText+="</select>\
-					<div>variety lower bound<input id='varietyLow' value='0'/></div>\
-					<div>variety higher bound<input id='varietyHi' value='100'/></div>\
-					";
+		newWinText+=`</select>
+					<table style='margin-bottom:10px;'>
+						<tr>
+							<td>
+								不小于
+							</td>
+							<td>
+								<input id='varietyLow' value='0'/>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								不大于
+							</td>
+							<td>
+								<input id='varietyHi' value='100'/>
+							</td>
+						</tr>
+					</table>
+					`;
 		openSubWin(newWinText,function(){
 				//newWin.get=util.get;
-				/*load info from subWin*/
+					/*load info from subWin*/
+					disableButton('addVarEdgeBut');
+					
 					that.createEdge(document.getElementById("varietySelect").value,
 								document.getElementById("varietyLow").value,
 								document.getElementById("varietyHi").value
@@ -247,7 +249,7 @@ function processEditor(){
 	
 	
 	this.createEdge=function(varName,varLow,varHi){
-		log(varName+" "+varLow+" "+varHi);
+		//log(varName+" "+varLow+" "+varHi);
 		
 		var selected=[];				//store two selected node
 		var beffunc=that.nodeClick;		//save onclick function before
@@ -273,8 +275,10 @@ function processEditor(){
 				if (selected.length==1)	return;
 				/*already 2 nodes selected,add edge and finish*/
 				if (edges[selected[0]][selected[1]]||edges[selected[1]][selected[0]]){
-					alert("edge already exist!");
+					alert("结点间已经存在边了!");
 					that.clearUp();
+					restoreButton('addEdgeBut');
+					restoreButton('addVarEdgeBut');
 					return;
 				}
 				edges[selected[0]][selected[1]]=new edge(varName,varLow,varHi);
@@ -285,9 +289,14 @@ function processEditor(){
 					newText.className="varietyText";
 					newText.innerHTML=varLow+" <= "+varName+" <= "+varHi;
 					
-					log("new variety edge:"+newText.id+" "+newText.innerHTML);
+					//log("new variety edge:"+newText.id+" "+newText.innerHTML);
 					get("editArea").appendChild(newText);
 					centerVarText(selected[0],selected[1]);		//make text center
+					/*restore button able*/
+					restoreButton('addVarEdgeBut');
+				}
+				else{
+					restoreButton('addEdgeBut');
 				}
 				that.clearEdges();
 				that.reDrawEdges();
@@ -335,7 +344,7 @@ function processEditor(){
 		myInput.value=jstr;
 		
 		myForm.appendChild(myInput);
-		log(myInput.value);
+		//log(myInput.value);
 		get("editArea").appendChild(myForm);
 		myForm.submit();
 		get("editArea").removeChild(myForm);
@@ -347,9 +356,9 @@ function processEditor(){
 		 *jstr:JSON object store graph structure.
 		 *jstr generated by PHP
 		 */
-		log("jstr");log(jstr);
+		//log("jstr");//log(jstr);
 		for (var i in jstr.nodes){
-			log("nodes:"+jstr.nodes[i]);
+			//log("nodes:"+jstr.nodes[i]);
 			//nodes.push(jstr.nodes[i]);
 			nodes[jstr.nodes[i]]={};
 			edges[jstr.nodes[i]]=[];
@@ -368,7 +377,7 @@ function processEditor(){
 				newText.className="varietyText";
 				newText.innerHTML=jstr.edges[i].varLow+" <= "+jstr.edges[i].varName+" <= "+jstr.edges[i].varHi;
 				
-				log("new variety edge:"+newText.id+" "+newText.innerHTML);
+				//log("new variety edge:"+newText.id+" "+newText.innerHTML);
 				get("editArea").appendChild(newText);
 				//centerVarText(selected[0],selected[1]);		//make text center
 			}
@@ -396,19 +405,19 @@ function processEditor(){
 		for (var dep in depth)
 			maxLayer=Math.max(maxLayer,depth[dep].length);
 		
-		log("maxLayer:"+maxLayer);
+		//log("maxLayer:"+maxLayer);
 		/*draw nodes in depth as layer*/
 		for (var dep in depth){
 			var x=(canvasWidth*0.9)/(depth.length-1)*dep+canvasWidth*0.02;
 			for (var i in depth[dep]){
 				
-				log("node:"+depth[dep][i]+" depth:"+dep+" ind:"+i);
+				//log("node:"+depth[dep][i]+" depth:"+dep+" ind:"+i);
 				
 				var y;
 				if (maxLayer==1)	y=0.5*canvasHeight;
 				//else	y=(0.5-((depth[dep].length-1)/2+i)*0.7/(maxLayer-1))*canvasHeight;
 				else y=0.5*canvasHeight-0.7*canvasHeight*(depth[dep].length-1)/(maxLayer-1)/2+0.7*canvasHeight*i/(maxLayer-1);
-				log(y);
+				//log(y);
 				var handle=document.createElement("div");	//create new node
 				handle.id=depth[dep][i];
 				handle.className="processNode";
@@ -447,4 +456,68 @@ function processEditor(){
 		this.varName=varName,
 		this.varLow=varLow,this.varHi=varHi;
 	}
+	
+	function disableButton(id){
+		get(id).disabled=true;
+		get(id).style.border="3px #CCC inset";
+		get(id).style.opacity="0.5";
+		get(id).innerHTML="选择边的起点和终点";
+	}
+	
+	function restoreButton(id){
+		get(id).disabled=false;
+		get(id).style.border="3px #CCC outset";
+		get(id).style.opacity="1";
+		if (id=='addVarEdgeBut')
+			get(id).innerHTML="添加条件判断边";
+		else
+			get(id).innerHTML="添加边";
+	}
+	
+	
+	var selectReviewerSubWinText="<div class='titlefont'>select reviewer:</div>\
+						<select id='reviewerSelect' style='margin-bottom:10px'>";;
+	
+	var createProcessSubWinText=`
+					<table>
+						<tr>
+							<td>
+								输入流程标题
+							</td>
+							<td>
+								<input type='text' id='processTitle'/>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								输入变量
+							</td>
+							<td>
+								<input id='varInput'/>
+							</td>
+							<td>
+								<button class='createBut' onclick='processeditor.subWin.addVar();'>添加变量</button>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								输入审核人
+							</td>
+							<td>
+								<input id='reviewerInput'/>
+							</td>
+							<td>
+								<button class='createBut' onclick='processeditor.subWin.addReviewer();'>添加审核人</button>
+							</td>
+						</tr>
+					</table>
+					
+					<div id='varArea' style='width:80%'><h4>变量</h4></div>
+					<div class='killFloat'></div>
+					
+					
+					<div id='reviewerArea' style='width:80%'><h4>审核人</h4></div>
+					<div class='killFloat'></div>
+					<div style='margin-bottom:10px;'></div>
+					`;
 }

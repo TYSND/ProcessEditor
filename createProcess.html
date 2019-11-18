@@ -60,11 +60,9 @@
 			cursor:move;
 		}
 		
-		.submitBut{
-			min-width:100px;
-			height:50px;
-			background:#CCC;
-			font-size:20px;
+		.createBut{
+			margin-top:0;
+
 		}
 		
 		.category{
@@ -75,6 +73,21 @@
 			font-size:16px;
 			border:solid 2px #CCC;
 		}
+		
+		.toolBut{
+			width: 260px;
+			height: 60px;
+			font-size: 20px;
+			border-radius: 10px 30px 30px 10px;
+			border: 3px #CCC outset;
+			margin-top: 15px;
+			color:white;
+			cursor:pointer;
+		}
+		
+		.toolBut:active{
+			border: 3px #CCC inset;
+		}
 	</style>
 </head>
 
@@ -84,14 +97,30 @@
 			<canvas width="1000" height="600" id="canvas" style="border:1px solid #CCC">
 			</canvas>
 		</div>
-		<button class="submitBut" onclick="processeditor.addNode();">添加结点</button>
-		<button class="submitBut" onclick="processeditor.addNormalEdge();">添加边</button>
-		<button class="submitBut" onclick="processeditor.addVarEdge();">添加条件判断边</button>
+		
 	</div>
 	<div class="fl" style="margin-left:30px">
+		<div>
+			<button style="background:rgba(34, 128, 210, 0.7)"class="toolBut" onclick="processeditor.addNode();">
+				添加结点
+			</button>
+		</div>
+		<div>
+			<button style="background:rgba(231, 107, 54, 0.7)" id="addEdgeBut" class="toolBut" 
+				onclick="processeditor.addNormalEdge();">
+				添加边
+			</button>
+		</div>
+		<div>
+			<button style="background:rgba(210, 34, 34, 0.7)" id="addVarEdgeBut" class="toolBut" 
+				onclick="processeditor.addVarEdge();">
+				添加条件判断边
+			</button>
+		</div>
+		<button type="button" class="submitBut" style="margin-top: 300px;height: 60px;font-size: 22px;background:#EAEAEA;" onclick="processeditor.submit();">提交</button>
 	</div>
 	<div class="killFloat"></div>
-	<button type="button" class="submitBut" onclick="processeditor.submit();">提交</button>
+	
 	<script>
 		//初始化放在最后，防止get不到未加载的DOM元素
 		processeditor=new processEditor();
