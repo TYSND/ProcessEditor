@@ -24,9 +24,9 @@
 	$pid=$_GET['processid'];
 	
 	$allowres=mysqli_query($con,"
-		select usersta from processmember
+		select count(*) as num from processmember
 		where
-		processid=$pid and userid=$uid
+		processid=$pid and userid=$uid and usersta=0
 	;");
 	if(!$allowres)
 	{
@@ -34,7 +34,7 @@
 		exit();
 	}
 	$allowrow=mysqli_fetch_array($allowres);
-	if($allowrow['usersta']>0)
+	if($allowrow['num']==0)
 	{
 		echo '<script>alert("只有流程创建者才能调整用户角色!");location.href="index.html";</script>';
 		exit();

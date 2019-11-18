@@ -70,6 +70,10 @@ values
 
 insert into userinfo
 values
+(5,'张老师','zls@qq.com','123456');
+
+insert into userinfo
+values
 (6,'小明','xm@qq.com','123456');
 
 insert into processmember
@@ -83,3 +87,7 @@ values
 insert into processmember
 values
 (1,6,1);
+
+insert into processmember
+values
+(1,7,1);

@@ -7,18 +7,22 @@
 		exit();
 	}
 	$uid=$_SESSION['userid'];
+	$color="";
 	function getres($res)
 	{
-		
+		global $color;
 		switch ($res)
 		{
 			case 0:
+				$color="#4052b4";
 				$rt="待审核";
 				break;
 			case 1:
+				$color="#4bb82c";
 				$rt="通过";
 				break;
 			case 2:
+				$color="#d51e47";
 				$rt="不通过";
 				break;
 		}	
@@ -170,7 +174,7 @@ echo <<<applyinfo
                 <div class="fl">
                     $time
                 </div>
-                <div class="fl wrongFont" style="margin-left:20px;">
+                <div class="fl wrongFont" style="margin-left:20px;color:$color">
                     状态：$ares
                 </div>
 	         	<div class="killFloat"></div>
