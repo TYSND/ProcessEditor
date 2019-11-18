@@ -11,7 +11,7 @@ function roleManager(){
 	
 	function nullOpt(){
 		/*public null option node,appended to reseted selects*/
-		var nullOpt=createOpt(" --- 空 --- ","","none");
+		var nullOpt=createOpt(" --- 空 --- ","","");
 		return nullOpt;
 	}
 	
@@ -37,8 +37,15 @@ function roleManager(){
 		}
 		for (var i in jstr.positions){
 			posi[jstr.positions[i].pos]=jstr.positions[i].userid;
-			if (jstr.positions[i].userid!=null)
-				that.assignPos(jstr.positions[i].pos,jstr.positions[i].userid);
+			if (jstr.positions[i].userid!=null){
+				var h=get(jstr.positions[i].pos);	//handler
+				h.options.add(createOpt(users[jstr.positions[i].userid],jstr.positions[i].userid,"selected"));
+				lastUsers.splice(lastUsers.indexOf(jstr.positions[i].userid),1);
+			}
+			else{
+				var h=get(jstr.positions[i].pos);	//handler
+				h.options.add(createOpt(" --- 空 --- ","","selected"));
+			}
 			get(jstr.positions[i].pos).addEventListener("click",that.genOptFor);
 			get(jstr.positions[i].pos).addEventListener("change",that.assignPos);
 		}
@@ -51,10 +58,14 @@ function roleManager(){
 	this.assignPos=function(e){
 		var select=e.target;
 		var selectId=select.id;
-		if (posi[selectId]!=null)
+		if (posi[selectId]!=""&&posi[selectId]!=null){
+			log('push to lastUsers:'+posi[selectId]);
 			lastUsers.push(posi[selectId]);
-		if (select.value!=null)
+		}
+		if (select.value!=""){
+			log('splice from lastUsers:'+select.value);
 			lastUsers.splice(lastUsers.indexOf(select.value),1);
+		}
 		posi[selectId]=select.value;
 		//select.addEventListener("click",that.genOptFor);
 		log("assignPos");
