@@ -132,6 +132,8 @@ select{
 	border-radius: 6px;
 	border: 1px solid #CCC;
 	box-shadow: 0px 0px 2px 1px #BBB;
+	margin-top:10px;
+	margin-right:20px;
 }
 
 .createBut{
@@ -142,6 +144,8 @@ select{
 	border-radius: 6px;
 	box-shadow: 1px 1px 2px #DDD;
 	cursor:pointer;
+	margin-top:10px;	
+	margin-right:20px;
 }
 
 .createBut:active{

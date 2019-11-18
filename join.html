@@ -16,17 +16,9 @@ require 'php/dblogin.php';
 <html>
 	<head>
 		<meta charset="UTF-8">
+	
 		<title>加入流程</title>
-		<script src="js/Wdatepicker/WdatePicker.js"></script>
-		<link href="css/joinFieldlayout.css" rel="stylesheet" type="text/css" />
-		<link href="css/indexlayout.css" rel="stylesheet" type="text/css" />
-		<link href="css/buttons.css" rel="stylesheet" type="text/css" />
-		<link href="css/comboBox.css" rel="stylesheet" type="text/css" />
-		<link href="css/loginAndregisterlayout.css" rel="stylesheet" type="text/css" />
-		<link href="css/loginAndregisterlayout.css" rel="stylesheet" type="text/css" />
-		<link href="css/unreadlayout.css" rel="stylesheet" type="text/css" />
-		<script src="js/public-header.js"></script>
-		<script src="js/combobox.js"></script>
+		<link href="css/public.css" rel="stylesheet" type="text/css" />
 	</head>
 <body>
 <?php
@@ -40,9 +32,9 @@ require 'php/dblogin.php';
 
 <?php require 'php/publicLeft.php'; ?>
 <rbody>
-<div class="topblacktitle">
+<h2>
 	加入流程
-</div>
+</h2>
 	<form method="post">
 		<div class="allrows rbborder">
 			<!--Row1 -->
@@ -51,7 +43,7 @@ require 'php/dblogin.php';
 					<span style="margin-bottom:20px">选择要加入的流程</span>
 					<!--<input type="text" id="fieldid" name="fieldid" />-->
 					<div>
-						<select class="langselect" id="processname" name="processname" onchange="" style="float:left">
+						<select id="processname" name="processname" onchange="" style="float:left">
 							<?php
 							$processres=mysqli_query($con,"select processid,processname from processinfo");
 							$uid=$_SESSION['userid'];
@@ -76,9 +68,7 @@ require 'php/dblogin.php';
 							?>
 							
 						</select>
-						<div class="submitButton" style="float:left">
-							<input  type="submit" class="button" id="submitbutton" value="提交" onmousedown="document.getElementById('submitbutton').style='width:70px;height:30px;';" onmouseup="document.getElementById('submitbutton').style='width:80px;height:40px;';" >
-						</div>
+						<button type="submit" class="createBut" id="submitbutton">加入</button>
 						<div style="clear:both"></div>
 					</div>
 				</div>
