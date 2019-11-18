@@ -58,3 +58,28 @@ values
 insert into processmember
 values
 (1,3,2);
+
+
+insert into userinfo
+values
+(4,'王老师','wls@qq.com','123456');
+
+insert into userinfo
+values
+(5,'李老师','lls@qq.com','123456');
+
+insert into userinfo
+values
+(6,'小明','xm@qq.com','123456');
+
+insert into processmember
+values
+(1,4,1);
+
+insert into processmember
+values
+(1,5,1);
+
+insert into processmember
+values
+(1,6,1);

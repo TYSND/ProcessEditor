@@ -54,13 +54,21 @@
 <?php
 	require 'php/dblogin.php';
 	$plstres=mysqli_query($con,"
-		select a.processid,b.processname
+		select processid,processname
 		from 
-		processmember a
-		left join
-		processinfo b
-		on a.processid=b.processid
+		processinfo a
+		where
+		(select count(*) from processmember where processid=a.processid and userid=$uid and usersta=1)=1
 	;");
+/*
+select processid,processname
+from 
+processinfo a
+where
+(select count(*) from processmember where processid=a.processid and userid=6 and usersta=1)=1
+
+
+*/
 	if(!$plstres)
 	{
 		echo 'process list error';
