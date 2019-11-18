@@ -1,4 +1,17 @@
 <?php
+	require 'dblogin.php';
+	$uid=$_SESSION['userid'];
+	$nickres=mysqli_query($con,"
+		select nick from userinfo
+		where
+		userid=$uid
+	;");
+	if(!$nickres)
+	{
+		$nick="empty";
+	}
+	$nickrow=mysqli_fetch_array($nickres);
+	$nick=$nickrow['nick'];
 	echo'
 		<h1>流程管理系统</h1>
 	<lBody>

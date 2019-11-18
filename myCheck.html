@@ -73,6 +73,7 @@
 	<h2>我的审批</h2>
     <div id="barArea">
 	<?php
+		$cnt=0;
 		require 'php/dblogin.php';
 		$mcarr=Array();//真正该我审核的applydid
 		//查询该用户在哪些流程里是审核者，及其身份
@@ -130,6 +131,18 @@ order by b.res asc
 				;");
 				$appnickrow=mysqli_fetch_array($appnickres);
 				$nick=$appnickrow['nick'];
+				//先查询该用户是否要审核该申请，即条件判断边是否经过该用户
+				$needcheckres=mysqli_query($con,"
+					select count(*) as num
+					from allapplyedge
+					where
+					applyid=$aid and
+					(fromusersta=$usta or tousersta=$usta)
+					
+				;");
+				$needcheckrow=mysqli_fetch_array($needcheckres);
+				if($needcheckrow['num']==0)	continue;
+				
 				//下面的待审核，通过，不通过指的是该申请，而非该用户的决定！！！
 				if($res==0)//待审核
 				{
@@ -196,6 +209,7 @@ echo "
 						;");
 						$indtimerow=mysqli_fetch_array($indtimeres);
 						$indtime=$indtimerow['ctime'];
+$cnt++;
 echo <<<mycheck
 		<div class="bar">
             <a class="titlefont barCol1" target="_blank" href="applyInfo.html?applyid=$aid">
@@ -278,6 +292,25 @@ order by b.res asc
 				;");
 				$appnickrow=mysqli_fetch_array($appnickres);
 				$nick=$appnickrow['nick'];
+				
+				//先查询该用户是否要审核该申请，即条件判断边是否经过该用户
+				$needcheckres=mysqli_query($con,"
+					select count(*) as num
+					from allapplyedge
+					where
+					applyid=$aid and
+					(fromusersta=$usta or tousersta=$usta)
+					
+				;");
+/*
+select count(*) as num
+from allapplyedge
+where
+applyid=6 and
+fromusersta=5 or tousersta=5
+*/
+				$needcheckrow=mysqli_fetch_array($needcheckres);
+				if($needcheckrow['num']==0)	continue;
 				//下面的待审核，通过，不通过指的是该申请，而非该用户的决定！！！
 				if($res==0)//待审核
 				{
@@ -340,7 +373,8 @@ echo "
 					}
 					else
 					{
-					$color="#4bb82c";
+$cnt++;					
+					//$color="#4bb82c";
 echo <<<mycheck
 		<div class="bar">
             <a class="titlefont barCol1" target="_blank" href="applyInfo.html?applyid=$aid">
@@ -378,7 +412,7 @@ mycheck;
 					if($myres==0)	continue;
 					$myres=getres($myres);
 					
-					
+$cnt++;					
 echo <<<mycheck
 		<div class="bar">
             <a class="titlefont barCol1" target="_blank" href="applyInfo.html?applyid=$aid">
@@ -401,7 +435,14 @@ mycheck;
 		}
 		
 		
-		
+if($cnt==0)
+{
+echo <<<mycheck
+		<div class="bar">
+            没有需要审批的申请
+        </div>
+mycheck;
+}		
 
 	?>
         <!-- <div class="bar"> -->
