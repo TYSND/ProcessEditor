@@ -63,14 +63,26 @@
 			echo 'process error';
 			exit();
 		}
+		$cnt=0;
 		while($plstrow=mysqli_fetch_array($plstres))
 		{
+			$cnt++;
 			$pid=$plstrow['processid'];
 			$pname=$plstrow['processname'];
 echo <<<processinfo
 		<tr>
 			<td >
 				<a href="showProcess.html?processid=$pid">$pname</a>
+			</td>
+		</tr>
+processinfo;
+		}
+		if($cnt==0)
+		{
+echo <<<processinfo
+		<tr>
+			<td >
+				你还没有创建流程
 			</td>
 		</tr>
 processinfo;

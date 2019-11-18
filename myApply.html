@@ -116,7 +116,7 @@ process;
 	</div>
     <div id="barArea">
 	<?php
-		
+		$cnt=0;
 		$myapplyres=mysqli_query($con,"
 			select a.applyid,b.res,c.processname,a.applyname from 
 			(select applyid,processid,applyname from applyinfo where userid=$uid) a
@@ -164,6 +164,7 @@ on a.processid=c.processid
 			$timerow=mysqli_fetch_array($timeres);
 			$time=$timerow['time'];
 			$ares=getres($ares);
+			$cnt++;
 echo <<<applyinfo
 		<div class="bar">
             <a class="titlefont barCol1" target="_blank" href="showApply.html?applyid=$aid">
@@ -179,6 +180,14 @@ echo <<<applyinfo
                 </div>
 	         	<div class="killFloat"></div>
             </div>
+        </div>
+applyinfo;
+		}
+		if($cnt==0)
+		{
+echo <<<applyinfo
+		<div class="bar">
+           你还没有申请
         </div>
 applyinfo;
 		}

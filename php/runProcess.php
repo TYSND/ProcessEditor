@@ -189,12 +189,14 @@ echo 'select nxt email '.$flag.'<br/>';
 		if($flag)
 		{
 			mysqli_commit($con);
-			echo 'success'.'<br/>';
+			//echo 'success';
+			echo '<script>alert("success!");location.href="../myCheck.html";</script>';
 		}
 		else
 		{
 			mysqli_rollback($con);
-			echo 'error'.'<br/>';
+			//echo 'error'.'<br/>';
+			echo '<script>alert("error!");location.href="../myCheck.html";</script>';
 		}
 		mysqli_autocommit($con,TRUE);
 	}
