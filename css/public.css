@@ -124,3 +124,36 @@ rBody{
 h1{
 	margin-left:10%;
 }
+
+select{
+	padding: 5px 20px 5px 20px;
+	font-size: 16px;
+	font-family: consolas;
+	border-radius: 6px;
+	border: 1px solid #CCC;
+	box-shadow: 0px 0px 2px 1px #BBB;
+}
+
+.createBut{
+	background:#DDD;
+	border: 2px outset #AAA;
+	padding: 5px 20px 5px 20px;
+	font-size: 16px;
+	border-radius: 6px;
+	box-shadow: 1px 1px 2px #DDD;
+	cursor:pointer;
+}
+
+.createBut:active{
+	border: 2px inset #AAA;
+}
+
+.submitBut{
+	width: 100%;
+	padding: 5px 10px 5px 10px;
+	font-size: 16px;
+	color: black;
+	background:#DDD;
+	border-radius: 4px;
+	cursor:pointer;
+}

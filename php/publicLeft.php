@@ -10,6 +10,9 @@
 				<div class="navBarItem"><a href="myProcess.html">我的流程</a></div>
 			</div>
 		</div>
+		<button class="submitBut" onclick="location.href=\'php/quit.php\'" style="width:100%;margin:5px 0 5px 0">
+			退出登录
+		</button>
 	</lBody>
 	';
 ?>
