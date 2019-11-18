@@ -158,11 +158,16 @@ echo 'select nxt sta mean '.$flag.'<br/>';
 				{
 					//提请nxt对应的审核人，有一个申请自己审核
 					$nuidres=mysqli_query($con,"
-						select userid from processmemeber
+						select userid from processmember
 						where
 						processid=$pid and usersta=$nxt
 					;");
 					$flag=$flag&$nuidres;
+					echo "
+						select userid from processmember
+						where
+						processid=$pid and usersta=$nxt
+					;";
 echo 'select nxt user '.$flag.'<br/>';					
 					$nuidrow=mysqli_fetch_array($nuidres);
 					$nuid=$nuidrow['userid'];

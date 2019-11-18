@@ -8,6 +8,27 @@
 	}
 	
 	$uid=$_SESSION['userid'];
+	$color="";
+	function getres($res)
+	{
+		global $color;
+		switch ($res)
+		{
+			case 0:
+				$color="#4052b4";
+				$rt="待审核";
+				break;
+			case 1:
+				$color="#4bb82c";
+				$rt="通过";
+				break;
+			case 2:
+				$color="#d51e47";
+				$rt="不通过";
+				break;
+		}	
+		return $rt;
+	}
 	//$uid=3;
 ?>
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -53,10 +74,12 @@
     <div id="barArea">
 	<?php
 		require 'php/dblogin.php';
+		$mcarr=Array();//真正该我审核的applydid
 		//查询该用户在哪些流程里是审核者，及其身份
 		//查询这些流程里的申请
 		//查询这些申请中，哪些是该自己审核的，哪些是自己审核通过的，哪些是自己拒绝的
 		//显示这些申请
+
 		$mystares=mysqli_query($con,"
 			select a.processid,a.usersta,b.processname from
 			(select processid,usersta from processmember where userid=$uid and usersta>1) a
@@ -82,9 +105,18 @@ on a.processid=b.processid
 				select a.applyid,a.userid,b.res,a.applyname from
 				(select applyid,applyname,userid from applyinfo where processid=$pid) a
 				left join 
-				(select * from applyres) b
+				(select * from applyres ) b
 				on a.applyid=b.applyid
 			;");
+/*
+select a.applyid,a.userid,b.res,a.applyname from
+(select applyid,applyname,userid from applyinfo where processid=1) a
+left join 
+(select * from applyres ) b
+on a.applyid=b.applyid
+order by b.res asc
+
+*/
 			while($allapplyrow=mysqli_fetch_array($allapplyres))
 			{
 				$aid=$allapplyrow['applyid'];
@@ -101,6 +133,7 @@ on a.processid=b.processid
 				//下面的待审核，通过，不通过指的是该申请，而非该用户的决定！！！
 				if($res==0)//待审核
 				{
+				
 					//查询是不是该自己审核
 					/*
 					为了保险起见，查询4个值：自己这一点的入度a，入边中通过的边数b，出度c，出边中待审核的边数d
@@ -121,6 +154,15 @@ on a.processid=b.processid
 						and tousersta=$usta
 						and res=1
 					;");
+					/*
+echo "
+						select count(*) as indok from allapplyedge
+						where
+						applyid=$aid 
+						and tousersta=$usta
+						and res=1
+					;".'<br/>';
+					*/
 					$indokrow=mysqli_fetch_array($indokres);
 					$b=$indokrow['indok'];
 					
@@ -142,8 +184,11 @@ on a.processid=b.processid
 					$outdokrow=mysqli_fetch_array($outdokres);
 					$d=$outdokrow['outdok'];
 					//echo $a.' '.$b.' '.$c.' '.$d.'<br/>';
+					
+					
 					if($a==$b&&$c==$d)
 					{
+						array_push($mcarr,$aid);
 						$indtimeres=mysqli_query($con,"
 							select max(checktime) as ctime from allapplyedge
 							where
@@ -170,9 +215,153 @@ echo <<<mycheck
 mycheck;
 					}
 				}
+				
+			}
+		}
+
+
+
+
+
+
+	
+
+	
+		
+		$mystares=mysqli_query($con,"
+			select a.processid,a.usersta,b.processname from
+			(select processid,usersta from processmember where userid=$uid and usersta>1) a
+			left join
+			(select processid,processname from processinfo) b
+			on a.processid=b.processid
+		;");
+/*
+select a.processid,a.usersta,b.processname from
+(select processid,usersta from processmember where userid=3) a
+left join
+(select processid,processname from processinfo) b
+on a.processid=b.processid
+
+*/
+		while($mystarow=mysqli_fetch_array($mystares))
+		{
+			$pid=$mystarow['processid'];
+			$usta=$mystarow['usersta'];
+			$pname=$mystarow['processname'];
+//echo $pid.' '.$pname.' '.$usta.'<br/>';
+			$allapplyres=mysqli_query($con,"
+				select a.applyid,a.userid,b.res,a.applyname from
+				(select applyid,applyname,userid from applyinfo where processid=$pid) a
+				left join 
+				(select * from applyres ) b
+				on a.applyid=b.applyid
+			;");
+/*
+select a.applyid,a.userid,b.res,a.applyname from
+(select applyid,applyname,userid from applyinfo where processid=1) a
+left join 
+(select * from applyres ) b
+on a.applyid=b.applyid
+order by b.res asc
+
+*/
+			while($allapplyrow=mysqli_fetch_array($allapplyres))
+			{
+				$aid=$allapplyrow['applyid'];
+				$aname=$allapplyrow['applyname'];
+				$res=$allapplyrow['res'];
+				$appuid=$allapplyrow['userid'];
+				$appnickres=mysqli_query($con,"
+					select nick from userinfo
+					where
+					userid=$appuid
+				;");
+				$appnickrow=mysqli_fetch_array($appnickres);
+				$nick=$appnickrow['nick'];
+				//下面的待审核，通过，不通过指的是该申请，而非该用户的决定！！！
+				if($res==0)//待审核
+				{
+				
+					//查询是不是该自己审核
+					/*
+					为了保险起见，查询4个值：自己这一点的入度a，入边中通过的边数b，出度c，出边中待审核的边数d
+					如果该自己审核，那么a==b&&c==d
+					*/
+					$indres=mysqli_query($con,"
+						select count(*) as ind from allapplyedge
+						where
+						applyid=$aid 
+						and tousersta=$usta
+					;");
+					$indrow=mysqli_fetch_array($indres);
+					$a=$indrow['ind'];
+					$indokres=mysqli_query($con,"
+						select count(*) as indok from allapplyedge
+						where
+						applyid=$aid 
+						and tousersta=$usta
+						and res=1
+					;");
+					/*
+echo "
+						select count(*) as indok from allapplyedge
+						where
+						applyid=$aid 
+						and tousersta=$usta
+						and res=1
+					;".'<br/>';
+					*/
+					$indokrow=mysqli_fetch_array($indokres);
+					$b=$indokrow['indok'];
+					
+					$outdres=mysqli_query($con,"
+						select count(*) as outd from allapplyedge
+						where
+						applyid=$aid 
+						and fromusersta=$usta
+					;");
+					$outdrow=mysqli_fetch_array($outdres);
+					$c=$outdrow['outd'];
+					$outdokres=mysqli_query($con,"
+						select count(*) as outdok from allapplyedge
+						where
+						applyid=$aid 
+						and fromusersta=$usta
+						and res=0
+					;");
+					$outdokrow=mysqli_fetch_array($outdokres);
+					$d=$outdokrow['outdok'];
+					//echo $a.' '.$b.' '.$c.' '.$d.'<br/>';
+					
+					
+					if($a==$b&&$c==$d)
+					{
+						continue;
+					}
+					else
+					{
+					$color="#4bb82c";
+echo <<<mycheck
+		<div class="bar">
+            <a class="titlefont barCol1" target="_blank" href="applyInfo.html?applyid=$aid">
+                $aname
+            </a>
+            <div class="infofont barCol2">来自 $pname   申请人  $nick</div>
+            <div class="infofont barCol3">
+                <div class="fl">
+                    $ctime
+                </div>
+                <div class="fl" style="margin-left:20px;color:#4bb82c">
+                    通过
+                </div>
+                <div class="killFloat"></div>
+            </div>
+        </div>
+mycheck;
+					}
+				}
 				else//通过或不通过
 				{
-
 					//查询自己是通过还是不通过
 //echo $aid.' '.$usta;
 					$outres=mysqli_query($con,"
@@ -185,7 +374,11 @@ mycheck;
 					$myres=$outrow['res'];
 					$ctime=$outrow['checktime'];
 					//echo $myres;
-
+					//echo $myres.'<br/>';
+					if($myres==0)	continue;
+					$myres=getres($myres);
+					
+					
 echo <<<mycheck
 		<div class="bar">
             <a class="titlefont barCol1" target="_blank" href="applyInfo.html?applyid=$aid">
@@ -196,7 +389,7 @@ echo <<<mycheck
                 <div class="fl">
                     $ctime
                 </div>
-                <div class="fl" style="margin-left:20px;">
+                <div class="fl" style="margin-left:20px;color:$color">
                     $myres
                 </div>
                 <div class="killFloat"></div>
@@ -206,6 +399,9 @@ mycheck;
 				}
 			}
 		}
+		
+		
+		
 
 	?>
         <!-- <div class="bar"> -->
