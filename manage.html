@@ -1,4 +1,17 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<?php
+	session_start();
+	if(!isset($_SESSION['userid']))
+	{
+		echo '请先登录';
+		exit();
+	}
+	
+	$uid=$_SESSION['userid'];
+	
+	
+	//$uid=3;
+?>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
@@ -9,6 +22,24 @@
 <?php
 	require 'php/dblogin.php';
 	$pid=$_GET['processid'];
+	
+	$allowres=mysqli_query($con,"
+		select usersta from processmember
+		where
+		processid=$pid and userid=$uid
+	;");
+	if(!$allowres)
+	{
+		echo 'status error';
+		exit();
+	}
+	$allowrow=mysqli_fetch_array($allowres);
+	if($allowrow['usersta']>0)
+	{
+		echo '<script>alert("只有流程创建者才能调整用户角色!");location.href="index.html";</script>';
+		exit();
+	}
+	
 	$arr=Array();
 	$pmemres=mysqli_query($con,"
 		select userid from processmember

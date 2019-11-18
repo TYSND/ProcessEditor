@@ -7,6 +7,23 @@
 		exit();
 	}
 	$uid=$_SESSION['userid'];
+	function getres($res)
+	{
+		
+		switch ($res)
+		{
+			case 0:
+				$rt="待审核";
+				break;
+			case 1:
+				$rt="通过";
+				break;
+			case 2:
+				$rt="不通过";
+				break;
+		}	
+		return $rt;
+	}
 	//$uid=1;
 ?>
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -141,6 +158,7 @@ on a.processid=c.processid
 			}
 			$timerow=mysqli_fetch_array($timeres);
 			$time=$timerow['time'];
+			$ares=getres($ares);
 echo <<<applyinfo
 		<div class="bar">
             <a class="titlefont barCol1" target="_blank" href="showApply.html?applyid=$aid">
