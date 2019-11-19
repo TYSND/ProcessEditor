@@ -70,21 +70,17 @@
 			$pid=$plstrow['processid'];
 			$pname=$plstrow['processname'];
 echo <<<processinfo
-		<tr>
-			<td >
-				<a href="showProcess.html?processid=$pid">$pname</a>
-			</td>
-		</tr>
+		<div class='bar titlefont'>
+			<a target="_blank" href="showProcess.html?processid=$pid">$pname</a>
+		</div>
 processinfo;
 		}
 		if($cnt==0)
 		{
 echo <<<processinfo
-		<tr>
-			<td >
-				你还没有创建流程
-			</td>
-		</tr>
+		<div class='bar'>
+			你还没有创建流程
+		</div>
 processinfo;
 		}
 	?>
