@@ -107,6 +107,7 @@ if($flag)
 {
 	mysqli_commit($con);
 	echo 'success'.'<br/>';
+	echo '<script>location.href="../index.html";</script>';
 }
 else
 {
