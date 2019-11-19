@@ -1,18 +1,18 @@
 <?php
 	require 'dblogin.php';
 	$uid=$_SESSION['userid'];
-	$nickres=mysqli_query($con,"
+	$mynickres=mysqli_query($con,"
 		select nick from userinfo
 		where
 		userid=$uid
 	;");
-	if(!$nickres)
+	if(!$mynickres)
 	{
-		$nick="empty";
+		$mynick="empty";
 	}
-	$nickrow=mysqli_fetch_array($nickres);
-	$nick=$nickrow['nick'];
-	echo'
+	$mynickrow=mysqli_fetch_array($mynickres);
+	$mynick=$mynickrow['nick'];
+echo <<<publiccode
 		<h1>流程管理系统</h1>
 	<lBody>
 		<div id="navigatorBar">
@@ -23,9 +23,12 @@
 				<a href="myProcess.html"><div class="navBarItem">我的流程</div></a>
 			</div>
 		</div>
+		<div class="bar titlefont" style="width:95%;text-align:center;">
+			欢迎,$mynick
+		</div>
 		<button class="submitBut" onclick="location.href=\'php/quit.php\'" style="width:100%;margin:5px 0 5px 0">
 			退出登录
 		</button>
 	</lBody>
-	';
+publiccode;
 ?>

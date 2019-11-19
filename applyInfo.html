@@ -46,20 +46,9 @@
 </head>
 <?php
 	require 'php/dblogin.php';
-	$nickres=mysqli_query($con,"
-		select nick from userinfo
-		where
-		userid=$uid
-	;");
-	if(!$nickres)
-	{
-		echo 'user error';
-		exit();
-	}
-	$nickrow=mysqli_fetch_array($nickres);
-	$nick=$nickrow['nick'];
+	
 	$ainfores=mysqli_query($con,"
-		select applyname,processid,applyreason from applyinfo
+		select applyname,userid,processid,applyreason from applyinfo
 		where
 		applyid=$aid
 	;");
@@ -72,6 +61,20 @@
 	$pid=$ainforow['processid'];
 	$aname=$ainforow['applyname'];
 	$area=$ainforow['applyreason'];
+	$appuid=$ainforow['userid'];
+	//echo $uid.' '.$appuid;
+	$nickres=mysqli_query($con,"
+		select nick from userinfo
+		where
+		userid=$appuid
+	;");
+	if(!$nickres)
+	{
+		echo 'user error';
+		exit();
+	}
+	$nickrow=mysqli_fetch_array($nickres);
+	$nick=$nickrow['nick'];
 	
 	$pnameres=mysqli_query($con,"
 		select processname from processinfo
@@ -106,7 +109,7 @@
 		<div class="bar">
 			<h2>申请人</h2>
 			<div class="infofont">
-				申请人不是审核人的昵称，需修改！
+				
 			<?php echo $nick;?></div>
 			<div class="infofont">来自 <?php echo $pname; ?></div>
 			
