@@ -26,7 +26,7 @@ echo <<<publiccode
 		<div class="bar titlefont" style="width:95%;text-align:center;">
 			欢迎,$mynick
 		</div>
-		<button class="submitBut" onclick="location.href=\'php/quit.php\'" style="width:100%;margin:5px 0 5px 0">
+		<button class="submitBut" onclick="location.href='php/quit.php'" style="width:100%;margin:5px 0 5px 0">
 			退出登录
 		</button>
 	</lBody>

@@ -84,7 +84,7 @@ create table applyvariety
 	applyid int not null,
 	variety varchar(20) not null,
 	val int not null,
-	primary key(applyid,userid,variety)
+	primary key(applyid,variety)
 );
 
 
